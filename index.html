@@ -27,7 +27,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* ---------- shell ---------- */
-.app{height:100%;display:grid;grid-template-columns:minmax(232px,280px) minmax(0,1fr);gap:24px;padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.app{height:100%;box-sizing:border-box;display:grid;grid-template-columns:minmax(232px,280px) minmax(0,1fr);gap:24px;padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .nav{background:var(--panel);border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .nav-head{padding:20px 20px 16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
 .brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;letter-spacing:-.01em}
@@ -50,10 +50,16 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .scr .code{font-family:var(--mono);font-size:11px;color:var(--muted);width:24px;font-variant-numeric:tabular-nums}
 .scr.on{background:var(--bg);font-weight:600}
 .scr.on .code{color:var(--accent)}
+.states{display:flex;flex-wrap:wrap;gap:4px;padding:2px 8px 8px 42px}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:1;padding:5px 8px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--line);color:var(--muted)}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--line)}
+.st:hover{color:var(--fg)}
+.st.on{color:var(--fg);box-shadow:inset 0 0 0 1px var(--accent)}
+.st.on::before{background:var(--accent)}
 .nav-foot{margin:0;padding:12px 20px 16px;border-top:1px solid var(--line);font-size:12px;line-height:1.5;color:var(--muted)}
 
 .stage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-width:0;min-height:0}
-.wrap{position:relative;flex:none}
+.wrap{position:relative;flex:none;width:375px;height:812px}
 .caption{display:flex;align-items:center;gap:14px;font-size:14px}
 .caption .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
 .caption .sec{color:var(--muted)}
@@ -81,7 +87,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .tab.on{color:var(--ink);font-weight:600}
 .tab .askb{width:48px;height:48px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;margin-top:-4px}
 
-.btn{height:52px;width:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex:1}
+.btn{height:52px;width:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex:none}
+.hrow>.btn{flex:1}
 .btn.primary{background:var(--ink);color:#fff}
 .btn.secondary{box-shadow:inset 0 0 0 1px var(--ink)}
 .iconbtn{width:52px;height:52px;flex:none;border-radius:10px;box-shadow:inset 0 0 0 1px var(--ink);display:grid;place-items:center}
@@ -212,14 +219,14 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     <div class="nav-head">
       <div class="brand"><span class="fruit"></span>Persimmon</div>
       <button class="close" id="navClose" aria-label="Close screen list"></button>
-      <p>Lo-fi prototype · v0.1 · 23 screens</p>
+      <p id="navMeta">Lo-fi prototype · v0.2 · 23 screens</p>
     </div>
     <div class="ctrls">
       <label class="switch" for="hotToggle"><input type="checkbox" id="hotToggle"> Show hotspots</label>
       <button class="restart" id="restart"></button>
     </div>
     <div class="list" id="list"></div>
-    <p class="nav-foot">Tap anything on the phone. Tap empty space to flash what's clickable. Arrow keys step through screens in order.</p>
+    <p class="nav-foot">Pick a screen, or one of its states, to jump straight there. Tap anything on the phone; tap empty space to flash what's clickable. Arrow keys step through screens in order.</p>
   </aside>
   <main class="stage" id="stage">
     <button class="navopen-btn" id="navOpen"></button>
@@ -277,7 +284,7 @@ function reset(){S={applyTab:'apply',f:{otp0:'4',otp1:'8',q:'Patek'},taste:new S
 reset();
 
 /* ---------- building blocks ---------- */
-const top=(t,root)=>root?`<div class="topbar"><h1>${t}</h1><button data-toast="Notifications aren't in the lo-fi yet." aria-label="Notifications">${ic('bell')}</button></div>`
+const topBar=(t,root)=>root?`<div class="topbar"><h1>${t}</h1><button data-toast="Notifications aren't in the lo-fi yet." aria-label="Notifications">${ic('bell')}</button></div>`
  :`<div class="topbar"><button data-back aria-label="Back">${ic('chevL')}</button><span class="t">${t}</span><span class="sp"></span></div>`;
 const btn=(l,type='primary',a='')=>`<button class="btn ${type}" ${a}>${l}</button>`;
 const ph=(h,r=10,style='')=>`<div class="ph" style="height:${h}px;border-radius:${r}px;${style}">${ic('image',24)}</div>`;
@@ -302,19 +309,19 @@ const R={
 welcome:()=>({body:`${ph(320,20)}<p class="k">PERSIMMON</p><h2 class="h1">Everything, arranged.</h2><p class="s16 sub">A private concierge for luxury goods, travel and experiences.</p>`,
  footer:btn('Apply for membership','primary','data-act="applyTab" data-arg="apply" data-go="apply"')+btn('I have an invite code','secondary','data-act="applyTab" data-arg="invite" data-go="apply"')+btn('Sign in','ghost','data-tab="home"')}),
 
-apply:()=>{const inv=S.applyTab==='invite';return{top:top('Membership'),tight:true,
+apply:()=>{const inv=S.applyTab==='invite';return{top:topBar('Membership'),tight:true,
  body:`<div class="pills">${pill('Apply',!inv,'data-act="applyTab" data-arg="apply"')}${pill('Invite code',inv,'data-act="applyTab" data-arg="invite"')}</div>`+(inv
  ?`<div class="stack"><h2 class="h2">Enter your invite</h2><p class="s14 sub">Invite codes come from a current member and work once.</p></div>${field('inv-code','Invite code','e.g. PSM-4821')}${field('inv-phone','Phone','+49','tel')}`
  :`<div class="stack"><h2 class="h2">Tell us about you</h2><p class="s14 sub">Every membership is reviewed personally. It takes 2 minutes.</p></div>${field('ap-name','Full name','First and last name')}${field('ap-email','Email','name@email.com','email')}${field('ap-phone','Phone','+49','tel')}${field('ap-city','City','Where do you live?')}${field('ap-ref','Referred by (optional)','Member name or code')}`),
  footer:btn(inv?'Continue':'Submit application','primary','data-go="verify"')+`<p class="fine">By continuing you accept the Terms and Privacy Policy.</p>`}},
 
-verify:()=>({top:top('Verify'),
+verify:()=>({top:topBar('Verify'),
  body:`<div class="stack"><h2 class="h2">Enter the code</h2><p class="s15 sub">We sent a 6-digit code to +49 ••• ••• 21</p></div>
  <div class="otp">${[0,1,2,3,4,5].map(i=>`<input id="otp${i}" inputmode="numeric" maxlength="1" aria-label="Digit ${i+1}" value="${esc(S.f['otp'+i])}">`).join('')}</div>
  <button class="s14 b500 sub" style="align-self:flex-start" data-toast="New code sent to +49 ••• ••• 21.">Resend code in 0:30</button>`,
  footer:btn('Verify','primary','data-go="taste"')}),
 
-taste:()=>({top:top('Your taste'),tight:true,
+taste:()=>({top:topBar('Your taste'),tight:true,
  body:`<div class="prog"><i class="on"></i><i class="on"></i><i></i></div><p class="s13 b500 sub">Step 2 of 3</p>
  <div class="stack"><h2 class="h2">What are you into?</h2><p class="s15 sub">Pick a few. Your concierge will tailor suggestions.</p></div>
  <div class="pills wrap">${['Watches','Jewelry','Fashion','Art','Cars','Private jets','Yachts','Villas','Fine dining','Events','Wellness','Chauffeur'].map(t=>pill(t,S.taste.has(t),`data-act="taste" data-arg="${t}"`)).join('')}</div>
@@ -325,7 +332,7 @@ received:()=>({center:true,
  body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Application received</h2><p class="s15 sub">Our team reviews every membership personally. We'll be in touch within 48 hours.</p>${spill('In review')}`,
  footer:btn('Talk to a concierge','secondary','data-go="conversation"')+btn('Preview the approved app','ghost','data-tab="home"')+btn('Back to start','ghost','data-tab="welcome"')}),
 
-home:()=>({top:top('Persimmon',true),tab:'home',gap:18,
+home:()=>({top:topBar('Persimmon',true),tab:'home',gap:18,
  body:`<div class="hrow between"><div class="stack g2"><p class="s13 sub">Good evening</p><p class="s22 b600">Welcome back</p></div>${spill('Gold member',true)}</div>
  <button class="search" data-go="search">${ic('search',20)}<span>Search watches, villas, chefs…</span>${ic('sliders',20)}</button>
  <div class="tile" ${TAP} data-go="service">${ph(180,16)}<p class="s17 b600">Curated · Winter in Gstaad</p><p class="s13 sub">Chalets, private ski guides and après dining</p></div>
@@ -335,7 +342,7 @@ home:()=>({top:top('Persimmon',true),tab:'home',gap:18,
  ${shead('Exclusive drops')}
  <div class="hscroll">${card('Royal Oak 15500','Audemars Piguet','€ 48,000','data-go="product"')}${card('Monaco GP Paddock','Experience','From € 9,500','data-go="event"')}${card('Birkin 30','Hermès','Price on request','data-go="product"')}</div>`}),
 
-search:()=>{const q=S.f.q||'';return{top:top('Search'),tab:'home',
+search:()=>{const q=S.f.q||'';return{top:topBar('Search'),tab:'home',
  body:`<label class="search" for="q">${ic('search',20)}<input id="q" value="${esc(q)}" placeholder="Search watches, villas, chefs…" autocomplete="off">${ic('sliders',20)}</label>
  ${S.recentCleared?'':`${shead('Recent','Clear','data-act="clearRecent"')}<div class="rows">${row('Patek Philippe Nautilus','','data-go="product"')}${row('Private chef, Mykonos','','data-go="service"')}${row('Monaco GP paddock','','data-go="event"')}</div>`}
  ${shead('Popular now')}<div class="pills wrap">${['Hermès Birkin','Yacht charter','Michelin dining','Rolex Daytona','Private jet','Ski chalet'].map(t=>pill(t,false,`data-act="setq" data-arg="${t}"`)).join('')}</div>
@@ -344,25 +351,25 @@ search:()=>{const q=S.f.q||'';return{top:top('Search'),tab:'home',
 
 watches:()=>{const W=[['Nautilus 5711/1A','Patek Philippe','Price on request'],['Daytona 116500LN','Rolex','€ 38,500'],['Royal Oak 15500','Audemars Piguet','€ 48,000'],['RM 035','Richard Mille','Price on request'],['Aquanaut 5167A','Patek Philippe','€ 52,000'],['Submariner 124060','Rolex','€ 11,900']];
  const list=S.brand==='All'?W:W.filter(w=>w[1]===S.brand);
- return{top:top('Watches'),tab:'home',tight:true,
+ return{top:topBar('Watches'),tab:'home',tight:true,
  body:`<div class="pills">${pill('Filters',false,NOT('The filter sheet'))}${pill('Sort: Featured',false,NOT('Sorting'))}${pill('In stock',false,NOT('Stock filtering'))}</div>
  <div class="pills">${['All','Patek Philippe','Rolex','Audemars Piguet','Richard Mille'].map(b=>pill(b,S.brand===b,`data-act="brand" data-arg="${b}"`)).join('')}</div>
  <p class="s13 sub num">${S.brand==='All'?'Showing 6 of 128 pieces':`${list.length} ${S.brand} piece${list.length>1?'s':''}`}</p>
  <div class="grid">${list.map(w=>card(...w,'data-go="product"')).join('')}</div>`}},
 
-product:()=>({top:top('Details'),gap:12,
+product:()=>({top:topBar('Details'),gap:12,
  body:`${ph(280,16)}<div class="dots"><i class="on"></i><i></i><i></i></div>
  <p class="s13 sub">Patek Philippe</p><h2 class="h2">Nautilus 5711/1A</h2><p class="s17 b600">Price on request</p>
  ${shead('Details')}<div class="rows">${row('Condition','Unworn')}${row('Year','2021')}${row('Box & papers','Included')}${row('Delivery','5–7 days')}</div>`,
  footer:`<div class="hrow"><button class="iconbtn" data-act="save" aria-label="Save to wishlist" aria-pressed="${S.saved}">${ic('heart',22,S.saved?'currentColor':'none')}</button>${btn('Request this','primary','data-act="submit" data-arg="Patek Nautilus 5711/1A" data-go="sent"')}</div>`}),
 
-service:()=>({top:top('Service'),gap:12,
+service:()=>({top:topBar('Service'),gap:12,
  body:`${ph(200,16)}<p class="s13 sub">Dining · Private chef</p><h2 class="h2">Private chef at your villa</h2><p class="s14 sub">Mykonos · 4–6 hours · from € 2,400</p>
  ${shead("What's included")}<div class="checks">${['Menu designed with you','Sommelier pairing','Full setup and clean-up'].map(t=>`<div class="hrow" style="gap:10px">${ic('check',18)}<span>${t}</span></div>`).join('')}</div>
  ${shead('Your booking')}<div class="two">${field('sv-date','Date','Select date')}${field('sv-guests','Guests','2 guests')}</div>`,
  footer:btn('Request booking','primary','data-act="submit" data-arg="Private chef, Mykonos" data-go="sent"')}),
 
-event:()=>({top:top('Exclusive'),gap:12,
+event:()=>({top:topBar('Exclusive'),gap:12,
  body:`${ph(200,16)}<div class="hrow" style="gap:8px">${spill('Members only',true)}${S.rsvp?spill("You're going",true)+spill('11 spots left'):spill('12 spots left')}</div>
  <h2 class="h2">Private viewing at the Monaco Yacht Show</h2><p class="s14 sub">Sep 24 · Monaco · Gold & Black tiers</p>
  <p>Board three superyachts with a broker, followed by dinner on deck.</p>
@@ -370,7 +377,7 @@ event:()=>({top:top('Exclusive'),gap:12,
  footer:S.rsvp?`<p class="fine">You're on the list. Your concierge will send details a week before.</p>${btn('Cancel RSVP','secondary','data-act="rsvp"')}`
  :btn('RSVP','primary','data-act="rsvp"')+btn('Ask a question','ghost','data-go="conversation"')}),
 
-ask:()=>({top:top('New request'),tight:true,
+ask:()=>({top:topBar('New request'),tight:true,
  body:`<div class="stack"><h2 class="h2">What can we arrange?</h2><p class="s14 sub">Describe anything: a product, a trip, a table. Your concierge takes it from here.</p></div>
  ${field('ask-req','Your request','e.g. A table for 4 at Noma this Friday…','text',true)}
  <p class="label">Category (optional)</p><div class="pills">${['Product','Travel','Dining','Event','Other'].map(c=>pill(c,S.askCat===c,`data-act="askCat" data-arg="${c}"`)).join('')}</div>
@@ -380,7 +387,7 @@ ask:()=>({top:top('New request'),tight:true,
  <p class="label">Urgency</p><div class="pills">${['Flexible','This week','Urgent'].map(u=>pill(u,S.urg===u,`data-act="urg" data-arg="${u}"`)).join('')}</div>`,
  footer:btn('Review request','primary','data-go="review"')}),
 
-review:()=>{const v=(k,d)=>esc(S.f[k]||d);return{top:top('Review'),gap:16,
+review:()=>{const v=(k,d)=>esc(S.f[k]||d);return{top:topBar('Review'),gap:16,
  body:`<h2 class="h2">Check your request</h2>
  <div class="box" style="gap:14px">${[['Request',v('ask-req','A table for 4 at Noma, Friday 14 Nov, around 8pm. Window seat if possible.')],['Category',esc(S.askCat||'Dining')],['Budget',v('ask-budget','€ 1,000 – 2,000')],['Needed by',v('ask-date','Fri, 14 Nov')],['Location',v('ask-loc','Copenhagen')],['Urgency',S.urg],['Reply via','Chat']].map(([k,x])=>`<div class="stack g2"><p class="s12 sub">${k}</p><p>${x}</p></div>`).join('')}</div>
  <div class="attach">${ph(64,10,'width:64px')}${ph(64,10,'width:64px')}</div>
@@ -400,17 +407,17 @@ requests:()=>{const t=S.reqTab;let body=`<div class="pills">${['Active','Complet
   +rc('Chauffeur, FRA airport','Service · Today 18:30','€ 280','In progress',false,'data-toast="Only the Patek request is wired in the lo-fi."');}
  else if(t==='Completed'){body+=rc('Dinner at Le Cinq','Dining · Oct 30','€ 1,240','Completed',false,'data-toast="Receipts and rebooking live here. Not in the lo-fi yet."')+rc('Hermès Kelly 25','Product · Sep 12','€ 24,500','Delivered',false,'data-toast="Receipts and rebooking live here. Not in the lo-fi yet."');}
  else body+=`<div class="empty"><p class="s17 b600">No drafts</p><p class="s14 sub">Requests you start but don't send are saved here.</p><div style="width:200px;margin-top:8px">${btn('New request','secondary','data-go="ask"')}</div></div>`;
- return{top:top('Requests',true),tab:'requests',tight:true,body}},
+ return{top:topBar('Requests',true),tab:'requests',tight:true,body}},
 
 request:()=>{const cur=S.paid?4:2;const steps=[['Submitted','Nov 8'],['In review','Nov 8'],['Quote sent','Nov 9'],['Accepted',S.paid?'Today':''],['Paid',S.paid?'Today':''],['In progress',''],['Delivered','']];
- return{top:top('Request'),gap:16,
+ return{top:topBar('Request'),gap:16,
  body:`<div class="hrow" style="align-items:flex-start"><div class="grow stack" style="gap:4px"><p class="s20 b700">Patek Nautilus 5711/1A</p><p class="s13 sub">#PR-2038 · Product</p></div>${spill(S.paid?'Paid':'Quote sent',!S.paid)}</div>
  ${S.paid?`<div class="box"><p class="s13 sub">${S.pay==='deposit'?'Deposit paid':'Paid in full'} · Card •• 4417</p><p class="s28 b700 num">${S.pay==='deposit'?'€ 42,600':'€ 142,000'}</p><p class="s14">${S.pay==='deposit'?'€ 99,400 is due on delivery. ':''}Elena is arranging insured delivery to Frankfurt, Nov 18 – 20.</p>${btn('Download receipt','secondary',NOT('The receipt viewer'))}</div>`
  :`<div class="box"><p class="s13 sub">Quote from Elena</p><p class="s28 b700 num">€ 142,000</p><p class="s14">Unworn 2021, full set. Includes insured delivery to Frankfurt. Valid until 14 Nov.</p><div class="hrow" style="gap:10px">${btn('Accept','primary','data-go="checkout"')}${btn('Discuss','secondary','data-go="conversation"')}</div></div>`}
  ${shead('Status')}<div class="tl">${steps.map(([l,d],i)=>{const c=i<cur?'done':i===cur?'now':'todo';return`<div class="${c}"><i class="d ${c}"></i><span class="x">${l}</span><span class="s13 sub">${d}</span></div>`}).join('')}</div>
  <div class="rows">${row('Documents','2 files',NOT('The document viewer'))}${row('Chat with Elena','','data-go="conversation"')}</div>`}},
 
-checkout:()=>{const dep=S.pay==='deposit';const due=dep?42600:142000;return{top:top('Checkout'),tight:true,
+checkout:()=>{const dep=S.pay==='deposit';const due=dep?42600:142000;return{top:topBar('Checkout'),tight:true,
  body:`<div class="hrow">${ph(64,10,'width:64px')}<div class="grow stack g2"><p class="s15 b600">Patek Nautilus 5711/1A</p><p class="s14 sub num">€ 142,000</p></div></div>
  ${shead('Delivery')}<div class="rows">${row('Address','Home · Frankfurt',NOT('Address selection'))}${row('Date','Nov 18 – 20',NOT('The date picker'))}</div>
  ${shead('Payment')}<div class="pills">${pill('Pay in full',!dep,'data-act="pay" data-arg="full"')}${pill('Deposit 30%',dep,'data-act="pay" data-arg="deposit"')}</div>
@@ -425,12 +432,12 @@ paid:()=>({center:true,
  footer:btn('Track request','primary','data-act="trackStack" data-go="request"')+btn('Download receipt','ghost',NOT('The receipt viewer'))}),
 
 inbox:()=>{const th=(t,m,time,un,round,a)=>`<div class="thread" ${TAP} ${a}><span class="ph ${round?'round':''}">${ic('image',20)}</span><div class="m"><div class="hrow between"><p class="s15 b600">${t}</p><span class="s12 sub">${time}</span></div><p>${m}</p></div>${un?'<i class="unread"></i>':''}</div>`;
- return{top:top('Chat',true),tab:'inbox',gap:12,
+ return{top:topBar('Chat',true),tab:'inbox',gap:12,
  body:`<label class="search" for="chat-q">${ic('search',20)}<input id="chat-q" placeholder="Search messages" value="${esc(S.f['chat-q'])}" autocomplete="off"></label>
  <p class="s13 b500 sub">Your concierge</p><div>${th('Elena · Concierge',S.msgs.length?esc(S.msgs[S.msgs.length-1].t):"Of course. I'll confirm the table by 6pm.",'12:04',!S.read,true,'data-go="conversation"')}</div>
  <p class="s13 b500 sub">Requests</p><div>${th('Patek Nautilus 5711/1A','Quote updated with insured delivery.','11:40',!S.read,false,'data-go="conversation"')}${th('Gstaad chalet, Christmas','Could you share dates and guests?','Yesterday',false,false,'data-toast="Each request has its own thread. Only Patek is wired."')}${th('Table at Noma for 4','Request received.','Mon',false,false,'data-toast="Each request has its own thread. Only Patek is wired."')}</div>`}},
 
-conversation:()=>({top:top('Elena'),gap:12,
+conversation:()=>({top:topBar('Elena'),gap:12,
  body:`<div style="text-align:center">${spill('Re: Patek Nautilus 5711/1A')}</div><p class="s12 mute" style="text-align:center">Today 11:32</p>
  <div class="bub">Good news, I found one. Unworn, 2021, full set.</div>
  <div class="bub me">Great. Can you include delivery to Frankfurt?</div>
@@ -439,7 +446,7 @@ conversation:()=>({top:top('Elena'),gap:12,
  ${S.msgs.map(m=>`<div class="bub ${m.me?'me':''}">${esc(m.t)}</div>`).join('')}`,
  footer:`<div class="composer"><button aria-label="Attach" ${NOT('Attachments')}>${ic('paperclip')}</button><input id="msg" placeholder="Message" autocomplete="off" aria-label="Message"><button class="sendb" data-act="send" aria-label="Send">${ic('send',20)}</button></div>`}),
 
-profile:()=>({top:top('Profile',true),tab:'profile',gap:16,
+profile:()=>({top:topBar('Profile',true),tab:'profile',gap:16,
  body:`<div class="member"><p class="k">PERSIMMON</p><div style="height:40px"></div><p class="s22 b600">Gold member</p><p class="s13" style="color:#BFBFBF">Member since 2026 · No. 00412</p></div>
  <div class="rows">${row('Wishlist',String(4+(S.saved?1:0)),'data-go="wishlist"')}${row('Preferences','','data-go="preferences"')}${row('Addresses','2',NOT('Addresses'))}${row('Payment methods','',NOT('Payment methods'))}${row('Notifications','On',NOT('Notification settings'))}${row('Privacy & security','',NOT('Privacy & security'))}${row('Help & contact','','data-go="conversation"')}</div>
  ${btn('Sign out','ghost','data-act="signout" data-tab="welcome"')}`}),
@@ -447,11 +454,11 @@ profile:()=>({top:top('Profile',true),tab:'profile',gap:16,
 wishlist:()=>{let items=[['Birkin 30','Hermès','Price on request','product'],['Chalet Les Arolles','Gstaad · 6 guests','€ 9,000 / night','service'],['Royal Oak 15500','Audemars Piguet','€ 48,000','product'],['Private chef','Mykonos','From € 2,400','service']];
  if(S.saved)items.unshift(['Nautilus 5711/1A','Patek Philippe','Price on request','product']);
  if(S.wl==='Products')items=items.filter(i=>i[3]==='product');if(S.wl==='Services')items=items.filter(i=>i[3]==='service');
- return{top:top('Wishlist'),tight:true,
+ return{top:topBar('Wishlist'),tight:true,
  body:`<div class="pills">${['All','Products','Services'].map(x=>pill(x,S.wl===x,`data-act="wl" data-arg="${x}"`)).join('')}</div>
  <div class="grid">${items.map(i=>card(i[0],i[1],i[2],`data-go="${i[3]}"`)).join('')}</div>`}},
 
-preferences:()=>({top:top('Preferences'),tight:true,
+preferences:()=>({top:topBar('Preferences'),tight:true,
  body:`${shead('Sizes')}<div class="rows">${row('Clothing','M / 48',NOT('The size picker'))}${row('Shoes','EU 42',NOT('The size picker'))}${row('Ring','54',NOT('The size picker'))}</div>
  ${shead('Interests')}<div class="pills wrap">${['Watches','Art','Villas','Fine dining','Yachts','Cars','Wellness'].map(t=>pill(t,S.interests.has(t),`data-act="interest" data-arg="${t}"`)).join('')}</div>
  ${shead('Food & drink')}<div class="rows">${row('Dietary','Vegetarian',NOT('Dietary settings'))}${row('Favorite cuisine','Japanese',NOT('Cuisine settings'))}</div>
@@ -496,6 +503,7 @@ function render(id,keepScroll){
  document.getElementById('capName').textContent=m.name;
  document.getElementById('capSec').textContent='· '+m.sec;
  document.querySelectorAll('.scr').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
+ document.querySelectorAll('.st').forEach(b=>{let on=false;if(b.dataset.id===id){try{on=!!STATES[id][+b.dataset.i][2](S)}catch(e){}}b.classList.toggle('on',on)});
  if(pt)showToast();
 }
 
@@ -527,9 +535,38 @@ phone.addEventListener('input',e=>{
  if(el.id==='q'){const h=document.getElementById('rq');if(h)h.textContent=`Results for "${el.value}"`}
 });
 
+/* ---------- screen states: [label, set state, is active] ---------- */
+const OTP=['4','8','2','9','1','5'];
+const STATES={
+ apply:[['Apply',s=>s.applyTab='apply',s=>s.applyTab==='apply'],['Invite code',s=>s.applyTab='invite',s=>s.applyTab==='invite']],
+ verify:[['Partly entered',s=>OTP.forEach((d,i)=>s.f['otp'+i]=i<2?d:''),s=>!s.f.otp5],['Code complete',s=>OTP.forEach((d,i)=>s.f['otp'+i]=d),s=>!!s.f.otp5]],
+ taste:[['Suggested picks',s=>s.taste=new Set(['Watches','Art','Villas','Fine dining']),s=>s.taste.size>0],['Nothing picked',s=>s.taste=new Set(),s=>s.taste.size===0]],
+ search:[['With recent searches',s=>s.recentCleared=false,s=>!s.recentCleared],['Recent cleared',s=>s.recentCleared=true,s=>s.recentCleared]],
+ watches:[['All brands',s=>s.brand='All',s=>s.brand==='All'],['Filtered by brand',s=>s.brand='Rolex',s=>s.brand!=='All']],
+ product:[['Not saved',s=>s.saved=false,s=>!s.saved],['Saved',s=>s.saved=true,s=>s.saved]],
+ event:[['Before RSVP',s=>s.rsvp=false,s=>!s.rsvp],['RSVP confirmed',s=>s.rsvp=true,s=>s.rsvp]],
+ ask:[['Empty',s=>{['ask-req','ask-budget','ask-date','ask-loc'].forEach(k=>s.f[k]='');s.askCat='';s.urg='Flexible'},s=>!s.f['ask-req']],
+  ['Filled in',s=>{Object.assign(s.f,{'ask-req':'A table for 4 at Noma, Friday 14 Nov, around 8pm. Window seat if possible.','ask-budget':'€ 1,000 – 2,000','ask-date':'Fri, 14 Nov','ask-loc':'Copenhagen'});s.askCat='Dining';s.urg='This week'},s=>!!s.f['ask-req']]],
+ requests:[['Active',s=>{s.reqTab='Active';s.paid=false},s=>s.reqTab==='Active'&&!s.paid],['Active, after payment',s=>{s.reqTab='Active';s.paid=true},s=>s.reqTab==='Active'&&s.paid],
+  ['Completed',s=>s.reqTab='Completed',s=>s.reqTab==='Completed'],['Drafts (empty)',s=>s.reqTab='Drafts',s=>s.reqTab==='Drafts']],
+ request:[['Quote sent',s=>s.paid=false,s=>!s.paid],['Paid in full',s=>{s.paid=true;s.pay='full'},s=>s.paid&&s.pay==='full'],['Deposit paid',s=>{s.paid=true;s.pay='deposit'},s=>s.paid&&s.pay==='deposit']],
+ checkout:[['Pay in full',s=>s.pay='full',s=>s.pay==='full'],['Deposit 30%',s=>s.pay='deposit',s=>s.pay==='deposit']],
+ paid:[['Paid in full',s=>{s.paid=true;s.pay='full'},s=>s.pay==='full'],['Deposit paid',s=>{s.paid=true;s.pay='deposit'},s=>s.pay==='deposit']],
+ inbox:[['Unread',s=>s.read=false,s=>!s.read],['All read',s=>s.read=true,s=>s.read]],
+ conversation:[['Default',s=>s.msgs=[],s=>!s.msgs.length],['After you reply',s=>s.msgs=[{me:true,t:'Perfect, please go ahead.'},{me:false,t:"Noted. I'll come back to you shortly."}],s=>s.msgs.length>0]],
+ wishlist:[['All',s=>{s.wl='All';s.saved=false},s=>s.wl==='All'&&!s.saved],['Products',s=>s.wl='Products',s=>s.wl==='Products'],['Services',s=>s.wl='Services',s=>s.wl==='Services'],['With a new save',s=>{s.wl='All';s.saved=true},s=>s.wl==='All'&&s.saved]],
+ preferences:[['Saved picks',s=>{s.interests=new Set(['Watches','Art','Villas','Fine dining','Yachts']);s.brands=new Set()},s=>s.interests.size>0],['Nothing picked',s=>{s.interests=new Set();s.brands=new Set()},s=>s.interests.size===0]]
+};
+const nStates=Object.values(STATES).reduce((a,v)=>a+v.length,0);
+
 /* ---------- navigator ---------- */
-document.getElementById('list').innerHTML=FLOWS.map(([s,items],i)=>`<div class="flow"><h4>${s}</h4>${items.map(([id,code,name])=>`<button class="scr" data-id="${id}"><span class="code">${code}</span>${name}</button>`).join('')}</div>`).join('');
-document.getElementById('list').addEventListener('click',e=>{const b=e.target.closest('.scr');if(!b)return;stack=[];show(b.dataset.id);document.body.classList.remove('navopen')});
+document.getElementById('navMeta').textContent=`Lo-fi prototype · v0.2 · ${ORDER.length} screens · ${nStates} states`;
+document.getElementById('list').innerHTML=FLOWS.map(([s,items])=>`<div class="flow"><h4>${s}</h4>${items.map(([id,code,name])=>`<button class="scr" data-id="${id}"><span class="code">${code}</span>${name}</button>${STATES[id]?`<div class="states">${STATES[id].map(([l],i)=>`<button class="st" data-id="${id}" data-i="${i}">${l}</button>`).join('')}</div>`:''}`).join('')}</div>`).join('');
+document.getElementById('list').addEventListener('click',e=>{
+ const st=e.target.closest('.st'),b=e.target.closest('.scr');
+ if(st){STATES[st.dataset.id][+st.dataset.i][1](S);stack=[];if(cur===st.dataset.id)render(cur,true);else show(st.dataset.id)}
+ else if(b){stack=[];show(b.dataset.id)}else return;
+ document.body.classList.remove('navopen')});
 const hot=document.getElementById('hotToggle');
 hot.addEventListener('change',()=>{document.body.classList.toggle('hot',hot.checked);try{localStorage.setItem('psm-hot',hot.checked?'1':'0')}catch(e){}});
 try{if(localStorage.getItem('psm-hot')==='1'){hot.checked=true;document.body.classList.add('hot')}}catch(e){}
