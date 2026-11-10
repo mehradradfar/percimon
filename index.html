@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Persimmon Lo-Fi Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: flow navigator on the left, one scaled phone on a quiet canvas; on phones the prototype runs full-screen. */
+:root{
+  --bg:#E8E9EC; --panel:#F6F6F8; --fg:#18191C; --muted:#6A6C73; --line:#D4D6DB; --accent:#D2502A;
+  --hot:rgba(210,80,42,.8);
+  --ink:#1A1A1A; --sub:#6B6B6B; --mute:#9E9E9E; --pline:#D6D6D6; --pfill:#F2F2F2; --pfill2:#E0E0E0; --paper:#FFFFFF;
+  --sans:"Inter",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#131416;--panel:#1B1C1F;--fg:#ECEDF0;--muted:#9B9DA4;--line:#2D2F34;--accent:#F0724A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#131416;--panel:#1B1C1F;--fg:#ECEDF0;--muted:#9B9DA4;--line:#2D2F34;--accent:#F0724A;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- shell ---------- */
+.app{height:100%;display:grid;grid-template-columns:minmax(232px,280px) minmax(0,1fr);gap:24px;padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.nav{background:var(--panel);border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.nav-head{padding:20px 20px 16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.brand .fruit{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:inset -3px -3px 0 rgba(0,0,0,.15)}
+.nav-head p{margin:0;font-size:13px;color:var(--muted)}
+.nav-head .close{display:none}
+.ctrls{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid var(--line);align-items:center;justify-content:space-between}
+.switch{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;user-select:none}
+.switch input{appearance:none;width:30px;height:18px;border-radius:9px;background:var(--line);position:relative;cursor:pointer;margin:0;transition:background .15s}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--panel);transition:transform .15s}
+.switch input:checked{background:var(--accent)}
+.switch input:checked::after{transform:translateX(12px)}
+.restart{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);padding:6px 8px;border-radius:8px}
+.restart:hover{color:var(--fg);background:var(--bg)}
+.list{overflow-y:auto;padding:8px 12px 12px;flex:1;min-height:0}
+.flow{margin-top:12px}
+.flow h4{margin:0 8px 4px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.scr{display:flex;align-items:center;gap:10px;width:100%;padding:7px 8px;border-radius:8px;font-size:14px}
+.scr:hover{background:var(--bg)}
+.scr .code{font-family:var(--mono);font-size:11px;color:var(--muted);width:24px;font-variant-numeric:tabular-nums}
+.scr.on{background:var(--bg);font-weight:600}
+.scr.on .code{color:var(--accent)}
+.nav-foot{margin:0;padding:12px 20px 16px;border-top:1px solid var(--line);font-size:12px;line-height:1.5;color:var(--muted)}
+
+.stage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-width:0;min-height:0}
+.wrap{position:relative;flex:none}
+.caption{display:flex;align-items:center;gap:14px;font-size:14px}
+.caption .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.caption .sec{color:var(--muted)}
+.step{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--muted)}
+.step:hover{color:var(--fg);border-color:var(--muted)}
+.navopen-btn{display:none}
+
+/* ---------- phone (deliberately light: it is a wireframe) ---------- */
+.phone{position:absolute;top:0;left:0;width:375px;height:812px;transform-origin:top left;background:var(--paper);color:var(--ink);border-radius:44px;box-shadow:0 0 0 9px #0E0E10,0 28px 70px rgba(0,0,0,.28);overflow:hidden;display:flex;flex-direction:column;font-family:var(--sans);font-size:15px;line-height:1.35;color-scheme:light}
+.phone p,.phone h2,.phone h3{margin:0}
+.sb{height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-size:15px;font-weight:600}
+.sb i{width:26px;height:12px;border-radius:3px;background:var(--ink)}
+.topbar{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.topbar h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.01em}
+.topbar .t{font-size:17px;font-weight:600}
+.topbar .sp{width:24px}
+.content{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:20px;padding:12px max(20px,env(safe-area-inset-right,0px)) 24px max(20px,env(safe-area-inset-left,0px));scrollbar-width:none}
+.content::-webkit-scrollbar{display:none}
+.content>*{flex-shrink:0}
+.content.tight{gap:14px}
+.content.center{justify-content:center;align-items:center;text-align:center;gap:16px}
+.footer{flex:none;display:flex;flex-direction:column;gap:8px;padding:12px 20px 34px;border-top:1px solid var(--pline);background:var(--paper)}
+.tabbar{height:84px;flex:none;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 12px 0;border-top:1px solid var(--pline);background:var(--paper)}
+.tab{width:62px;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:4px;font-size:11px;font-weight:500;color:var(--mute)}
+.tab.on{color:var(--ink);font-weight:600}
+.tab .askb{width:48px;height:48px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;margin-top:-4px}
+
+.btn{height:52px;width:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex:1}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.secondary{box-shadow:inset 0 0 0 1px var(--ink)}
+.iconbtn{width:52px;height:52px;flex:none;border-radius:10px;box-shadow:inset 0 0 0 1px var(--ink);display:grid;place-items:center}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>span{font-size:13px;font-weight:500;color:var(--sub)}
+.field input,.field textarea{width:100%;height:48px;border:1px solid var(--pline);border-radius:8px;padding:0 14px;font:inherit;font-size:15px;color:var(--ink);background:var(--paper);outline:none;box-sizing:border-box}
+.field textarea{height:120px;padding:14px;resize:none}
+.field input:focus,.field textarea:focus{border-color:var(--ink)}
+.field ::placeholder{color:var(--mute)}
+.rows{display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:12px;height:56px;width:100%;border-bottom:1px solid var(--pline);text-align:left}
+.row .sq{width:20px;height:20px;border-radius:5px;background:var(--pfill2);flex:none}
+.row .l{flex:1;font-size:15px}
+.row .v{font-size:14px;color:var(--sub)}
+.row svg{color:var(--mute)}
+.pills{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px}
+.pills::-webkit-scrollbar{display:none}
+.pills.wrap{flex-wrap:wrap;margin:0;padding:0;overflow:visible}
+.pill{height:34px;padding:0 14px;border-radius:100px;box-shadow:inset 0 0 0 1px var(--pline);background:var(--paper);font-size:13px;font-weight:500;flex:none;display:inline-flex;align-items:center;white-space:nowrap}
+.pill.on{background:var(--ink);color:#fff;box-shadow:none}
+.spill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:100px;background:var(--pfill2);font-size:12px;font-weight:500;flex:none;white-space:nowrap}
+.spill.act{background:var(--ink);color:#fff}
+.ph{background:var(--pfill2);border-radius:10px;display:grid;place-items:center;color:var(--mute);flex:none;width:100%}
+.shead{display:flex;justify-content:space-between;align-items:center}
+.shead h3{font-size:18px;font-weight:600}
+.shead .a{font-size:13px;font-weight:500;color:var(--sub)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 14px}
+.card{display:flex;flex-direction:column;gap:4px;text-align:left;cursor:pointer;min-width:0}
+.card .ph{height:180px;margin-bottom:4px}
+.card .b{font-size:12px;color:var(--sub)}
+.card .n{font-size:14px;font-weight:500}
+.card .p{font-size:14px;font-weight:600}
+.hscroll{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px}
+.hscroll::-webkit-scrollbar{display:none}
+.hscroll .card{width:160px;flex:none}
+.box{background:var(--pfill);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.box.line{background:var(--paper);box-shadow:inset 0 0 0 1px var(--pline)}
+.hrow{display:flex;align-items:center;gap:12px}
+.box.hrow{flex-direction:row}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stack{display:flex;flex-direction:column;gap:6px}
+.stack.g2{gap:2px}
+.label{font-size:13px;font-weight:500;color:var(--sub);margin-bottom:-6px}
+.k{font-size:13px;font-weight:600;letter-spacing:.2em;color:var(--sub)}
+.h1{font-size:32px;font-weight:700;line-height:1.15;letter-spacing:-.02em;text-wrap:balance}
+.h2{font-size:24px;font-weight:700;line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--sub)}.mute{color:var(--mute)}
+.s12{font-size:12px}.s13{font-size:13px}.s14{font-size:14px}.s15{font-size:15px}.s16{font-size:16px}.s17{font-size:17px}.s20{font-size:20px}.s22{font-size:22px}.s28{font-size:28px}
+.b500{font-weight:500}.b600{font-weight:600}.b700{font-weight:700}
+.num{font-variant-numeric:tabular-nums}
+.fine{font-size:12px;color:var(--mute);text-align:center}
+.search{display:flex;align-items:center;gap:10px;height:48px;padding:0 14px;border-radius:10px;background:var(--pfill);color:var(--mute);width:100%;text-align:left;box-sizing:border-box}
+.search span{flex:1;font-size:15px}
+.search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:15px;color:var(--ink);outline:none}
+.search svg:last-child{color:var(--ink)}
+.tile{display:flex;flex-direction:column;gap:8px;cursor:pointer}
+.cats{display:flex;justify-content:space-between}
+.cat{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500}
+.cat .ph{width:68px;height:68px;border-radius:34px}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:-8px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--pfill2)}
+.dots i.on{background:var(--ink)}
+.badge{width:88px;height:88px;border-radius:50%;background:var(--pfill2);display:grid;place-items:center}
+.prog{display:flex;gap:6px}
+.prog i{flex:1;height:4px;border-radius:2px;background:var(--pfill2)}
+.prog i.on{background:var(--ink)}
+.otp{display:flex;gap:10px}
+.otp input{width:100%;min-width:0;height:56px;border:1px solid var(--pline);border-radius:10px;text-align:center;font:inherit;font-size:22px;font-weight:600;color:var(--ink);outline:none;background:var(--paper)}
+.otp input:focus{border-color:var(--ink);box-shadow:inset 0 0 0 .5px var(--ink)}
+.tl{display:flex;flex-direction:column}
+.tl>div{height:34px;display:flex;align-items:center;gap:12px}
+.tl .d{width:12px;height:12px;border-radius:50%;background:var(--pfill2);box-sizing:border-box;flex:none}
+.tl .d.done{background:var(--ink)}
+.tl .d.now{background:var(--paper);border:3px solid var(--ink)}
+.tl .x{flex:1}
+.tl .todo .x{color:var(--mute)}
+.tl .now .x{font-weight:600}
+.checks{display:flex;flex-direction:column;gap:10px}
+.attach{display:flex;gap:10px}
+.addph{width:64px;height:64px;border-radius:10px;border:1px dashed #BFBFBF;display:grid;place-items:center;color:var(--sub);flex:none}
+.thread{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--pline);cursor:pointer;text-align:left;width:100%}
+.thread .ph{width:48px;height:48px}
+.thread .ph.round{border-radius:24px}
+.thread .m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.thread .m p:last-child{font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.unread{width:8px;height:8px;border-radius:50%;background:var(--ink);flex:none}
+.bub{max-width:250px;padding:10px 14px;border-radius:16px;font-size:15px;background:var(--pfill);align-self:flex-start;overflow-wrap:anywhere}
+.bub.me{background:var(--ink);color:#fff;align-self:flex-end}
+.qcard{width:250px;align-self:flex-start;border-radius:16px;box-shadow:inset 0 0 0 1px var(--pline);padding:14px;display:flex;flex-direction:column;gap:6px;box-sizing:border-box}
+.qcard .btn{height:44px;flex:none}
+.composer{display:flex;align-items:center;gap:10px}
+.composer input{flex:1;min-width:0;height:44px;border-radius:22px;border:1px solid var(--pline);padding:0 16px;font:inherit;font-size:15px;outline:none;color:var(--ink);background:var(--paper)}
+.composer input:focus{border-color:var(--ink)}
+.sendb{width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;flex:none}
+.member{background:var(--ink);color:#fff;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px}
+.member .k{color:#BFBFBF;font-size:12px}
+.empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:48px 12px}
+.toast{position:absolute;left:20px;right:20px;bottom:104px;background:var(--ink);color:#fff;border-radius:12px;padding:12px 14px;font-size:14px;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:5}
+.toast.show{opacity:1;transform:none}
+
+/* hotspots */
+:is(body.hot .phone,.phone.flash) :is([data-go],[data-act],[data-back],[data-toast],[data-tab]){outline:2px solid var(--hot);outline-offset:-1px}
+.phone.flash :is([data-go],[data-act],[data-back],[data-toast],[data-tab]){animation:hot .7s ease-out both}
+@keyframes hot{from{outline-color:var(--hot)}to{outline-color:transparent}}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- phone-width: run the prototype full-screen ---------- */
+@media (max-width:640px){
+  .app{display:block;padding:0}
+  .stage{height:100%;gap:0}
+  .wrap{width:100%!important;height:100%!important}
+  .phone{position:relative;width:100%;height:100%;transform:none!important;border-radius:0;box-shadow:none}
+  .caption{display:none}
+  .navopen-btn{display:flex;position:fixed;z-index:30;top:calc(env(safe-area-inset-top,0px) + 8px);left:50%;transform:translateX(-50%);align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:14px;background:rgba(26,26,26,.88);color:#fff;font-size:12px;font-weight:600}
+  .nav{position:fixed;inset:0;z-index:40;border-radius:0;border:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);transform:translateY(100%);transition:transform .25s ease}
+  body.navopen .nav{transform:none}
+  .nav-head{flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .nav-head p{width:100%;order:3}
+  .nav-head .close{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--bg)}
+}
+</style>
+
+<div class="app">
+  <aside class="nav" id="nav" aria-label="Screens">
+    <div class="nav-head">
+      <div class="brand"><span class="fruit"></span>Persimmon</div>
+      <button class="close" id="navClose" aria-label="Close screen list"></button>
+      <p>Lo-fi prototype · v0.1 · 23 screens</p>
+    </div>
+    <div class="ctrls">
+      <label class="switch" for="hotToggle"><input type="checkbox" id="hotToggle"> Show hotspots</label>
+      <button class="restart" id="restart"></button>
+    </div>
+    <div class="list" id="list"></div>
+    <p class="nav-foot">Tap anything on the phone. Tap empty space to flash what's clickable. Arrow keys step through screens in order.</p>
+  </aside>
+  <main class="stage" id="stage">
+    <button class="navopen-btn" id="navOpen"></button>
+    <div class="wrap" id="wrap"><div class="phone" id="phone"></div></div>
+    <div class="caption">
+      <button class="step" id="prev" aria-label="Previous screen"></button>
+      <div><span class="code" id="capCode"></span> <span id="capName"></span> <span class="sec" id="capSec"></span></div>
+      <button class="step" id="next" aria-label="Next screen"></button>
+    </div>
+  </main>
+</div>
+
+<script>
+const P={
+ chevL:'<path d="m15 18-6-6 6-6"/>',chevR:'<path d="m9 18 6-6-6-6"/>',
+ bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+ compass:'<circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/>',
+ clip:'<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
+ msg:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+ user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+ plus:'<path d="M5 12h14"/><path d="M12 5v14"/>',
+ image:'<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+ search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+ sliders:'<path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/>',
+ heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+ send:'<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+ paperclip:'<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+ layers:'<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
+ rotate:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+ x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
+};
+const ic=(n,s=24,fill='none')=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="${fill}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const TAP='role="button" tabindex="0"';
+
+/* ---------- screen index ---------- */
+const FLOWS=[
+ ['Onboarding',[['welcome','1.1','Welcome'],['apply','1.2','Apply / Invite code'],['verify','1.3','Verify'],['taste','1.4','Your taste'],['received','1.5','Application received']]],
+ ['Discover',[['home','2.1','Home'],['search','2.2','Search'],['watches','2.3','Category list'],['product','2.4','Product detail'],['service','2.5','Service detail'],['event','2.6','Exclusive event']]],
+ ['Ask',[['ask','3.1','Request form'],['review','3.2','Review'],['sent','3.3','Submitted']]],
+ ['Requests',[['requests','4.1','Requests list'],['request','4.2','Request detail'],['checkout','4.3','Checkout'],['paid','4.4','Payment confirmed']]],
+ ['Chat',[['inbox','5.1','Inbox'],['conversation','5.2','Conversation']]],
+ ['Profile',[['profile','6.1','Profile'],['wishlist','6.2','Wishlist'],['preferences','6.3','Preferences']]]
+];
+const ORDER=FLOWS.flatMap(([s,items])=>items.map(i=>({id:i[0],code:i[1],name:i[2],sec:s})));
+const META=Object.fromEntries(ORDER.map(o=>[o.id,o]));
+
+/* ---------- state ---------- */
+let S;
+function reset(){S={applyTab:'apply',f:{otp0:'4',otp1:'8',q:'Patek'},taste:new Set(['Watches','Art','Villas','Fine dining']),
+ brand:'All',saved:false,rsvp:false,askCat:'',urg:'Flexible',reqTab:'Active',pay:'full',paid:false,newReqs:[],
+ msgs:[],read:false,wl:'All',interests:new Set(['Watches','Art','Villas','Fine dining','Yachts']),brands:new Set(),recentCleared:false}}
+reset();
+
+/* ---------- building blocks ---------- */
+const top=(t,root)=>root?`<div class="topbar"><h1>${t}</h1><button data-toast="Notifications aren't in the lo-fi yet." aria-label="Notifications">${ic('bell')}</button></div>`
+ :`<div class="topbar"><button data-back aria-label="Back">${ic('chevL')}</button><span class="t">${t}</span><span class="sp"></span></div>`;
+const btn=(l,type='primary',a='')=>`<button class="btn ${type}" ${a}>${l}</button>`;
+const ph=(h,r=10,style='')=>`<div class="ph" style="height:${h}px;border-radius:${r}px;${style}">${ic('image',24)}</div>`;
+const pill=(l,on,a='',tag='button')=>`<${tag} class="pill ${on?'on':''}" ${a}>${l}</${tag}>`;
+const spill=(l,act)=>`<span class="spill ${act?'act':''}">${l}</span>`;
+const shead=(t,a='',attrs='')=>`<div class="shead"><h3>${t}</h3>${a?`<button class="a" ${attrs}>${a}</button>`:''}</div>`;
+const row=(l,v='',a='')=>a?`<button class="row" ${a}><i class="sq"></i><span class="l">${l}</span><span class="v">${v}</span>${ic('chevR',18)}</button>`
+ :`<div class="row"><i class="sq"></i><span class="l">${l}</span><span class="v">${v}</span></div>`;
+const card=(n,b,p,a='')=>`<div class="card" ${TAP} ${a}>${ph(180)}<span class="b">${b}</span><span class="n">${n}</span><span class="p">${p}</span></div>`;
+const field=(id,l,ph_,type='text',multi=false)=>`<label class="field" for="${id}"><span>${l}</span>${multi
+ ?`<textarea id="${id}" placeholder="${esc(ph_)}">${esc(S.f[id])}</textarea>`
+ :`<input id="${id}" type="${type}" placeholder="${esc(ph_)}" value="${esc(S.f[id])}" autocomplete="off">`}</label>`;
+const kv=(k,v,bold)=>`<div class="hrow between"><span class="s14 ${bold?'b600':'sub'}">${k}</span><span class="s14 num ${bold?'b700':'b500'}">${v}</span></div>`;
+const tabs=a=>`<nav class="tabbar">${[['home','Discover','compass'],['requests','Requests','clip'],['ask','Ask','plus'],['inbox','Chat','msg'],['profile','Profile','user']].map(([id,l,i])=>
+ id==='ask'?`<button class="tab" data-go="ask" aria-label="New request"><span class="askb">${ic('plus')}</span></button>`
+ :`<button class="tab ${a===id?'on':''}" data-tab="${id}">${ic(i)}<span>${l}</span></button>`).join('')}</nav>`;
+const NOT=w=>`data-toast="${w} isn't in the lo-fi yet."`;
+const eur=n=>'€ '+n.toLocaleString('en-US');
+
+/* ---------- screens ---------- */
+const R={
+welcome:()=>({body:`${ph(320,20)}<p class="k">PERSIMMON</p><h2 class="h1">Everything, arranged.</h2><p class="s16 sub">A private concierge for luxury goods, travel and experiences.</p>`,
+ footer:btn('Apply for membership','primary','data-act="applyTab" data-arg="apply" data-go="apply"')+btn('I have an invite code','secondary','data-act="applyTab" data-arg="invite" data-go="apply"')+btn('Sign in','ghost','data-tab="home"')}),
+
+apply:()=>{const inv=S.applyTab==='invite';return{top:top('Membership'),tight:true,
+ body:`<div class="pills">${pill('Apply',!inv,'data-act="applyTab" data-arg="apply"')}${pill('Invite code',inv,'data-act="applyTab" data-arg="invite"')}</div>`+(inv
+ ?`<div class="stack"><h2 class="h2">Enter your invite</h2><p class="s14 sub">Invite codes come from a current member and work once.</p></div>${field('inv-code','Invite code','e.g. PSM-4821')}${field('inv-phone','Phone','+49','tel')}`
+ :`<div class="stack"><h2 class="h2">Tell us about you</h2><p class="s14 sub">Every membership is reviewed personally. It takes 2 minutes.</p></div>${field('ap-name','Full name','First and last name')}${field('ap-email','Email','name@email.com','email')}${field('ap-phone','Phone','+49','tel')}${field('ap-city','City','Where do you live?')}${field('ap-ref','Referred by (optional)','Member name or code')}`),
+ footer:btn(inv?'Continue':'Submit application','primary','data-go="verify"')+`<p class="fine">By continuing you accept the Terms and Privacy Policy.</p>`}},
+
+verify:()=>({top:top('Verify'),
+ body:`<div class="stack"><h2 class="h2">Enter the code</h2><p class="s15 sub">We sent a 6-digit code to +49 ••• ••• 21</p></div>
+ <div class="otp">${[0,1,2,3,4,5].map(i=>`<input id="otp${i}" inputmode="numeric" maxlength="1" aria-label="Digit ${i+1}" value="${esc(S.f['otp'+i])}">`).join('')}</div>
+ <button class="s14 b500 sub" style="align-self:flex-start" data-toast="New code sent to +49 ••• ••• 21.">Resend code in 0:30</button>`,
+ footer:btn('Verify','primary','data-go="taste"')}),
+
+taste:()=>({top:top('Your taste'),tight:true,
+ body:`<div class="prog"><i class="on"></i><i class="on"></i><i></i></div><p class="s13 b500 sub">Step 2 of 3</p>
+ <div class="stack"><h2 class="h2">What are you into?</h2><p class="s15 sub">Pick a few. Your concierge will tailor suggestions.</p></div>
+ <div class="pills wrap">${['Watches','Jewelry','Fashion','Art','Cars','Private jets','Yachts','Villas','Fine dining','Events','Wellness','Chauffeur'].map(t=>pill(t,S.taste.has(t),`data-act="taste" data-arg="${t}"`)).join('')}</div>
+ ${shead('Sizes')}<div class="rows">${row('Clothing','Select',NOT('The size picker'))}${row('Shoes','Select',NOT('The size picker'))}${row('Ring','Select',NOT('The size picker'))}</div>`,
+ footer:btn('Continue','primary','data-go="received"')+btn('Skip for now','ghost','data-go="received"')}),
+
+received:()=>({center:true,
+ body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Application received</h2><p class="s15 sub">Our team reviews every membership personally. We'll be in touch within 48 hours.</p>${spill('In review')}`,
+ footer:btn('Talk to a concierge','secondary','data-go="conversation"')+btn('Preview the approved app','ghost','data-tab="home"')+btn('Back to start','ghost','data-tab="welcome"')}),
+
+home:()=>({top:top('Persimmon',true),tab:'home',gap:18,
+ body:`<div class="hrow between"><div class="stack g2"><p class="s13 sub">Good evening</p><p class="s22 b600">Welcome back</p></div>${spill('Gold member',true)}</div>
+ <button class="search" data-go="search">${ic('search',20)}<span>Search watches, villas, chefs…</span>${ic('sliders',20)}</button>
+ <div class="tile" ${TAP} data-go="service">${ph(180,16)}<p class="s17 b600">Curated · Winter in Gstaad</p><p class="s13 sub">Chalets, private ski guides and après dining</p></div>
+ ${shead('Categories','All','data-go="watches"')}
+ <div class="cats">${[['Watches','watches'],['Travel',''],['Dining','service'],['Cars','']].map(([n,g])=>`<button class="cat" ${g?`data-go="${g}"`:`data-toast="${n} isn't wired yet. Try Watches or Dining."`}><span class="ph">${ic('image',24)}</span>${n}</button>`).join('')}</div>
+ <div class="box hrow" ${TAP} data-go="ask"><div class="grow stack g2"><p class="s15 b600">Can't find it?</p><p class="s13 sub">Ask your concierge for anything.</p></div>${pill('Ask',true,'','span')}</div>
+ ${shead('Exclusive drops')}
+ <div class="hscroll">${card('Royal Oak 15500','Audemars Piguet','€ 48,000','data-go="product"')}${card('Monaco GP Paddock','Experience','From € 9,500','data-go="event"')}${card('Birkin 30','Hermès','Price on request','data-go="product"')}</div>`}),
+
+search:()=>{const q=S.f.q||'';return{top:top('Search'),tab:'home',
+ body:`<label class="search" for="q">${ic('search',20)}<input id="q" value="${esc(q)}" placeholder="Search watches, villas, chefs…" autocomplete="off">${ic('sliders',20)}</label>
+ ${S.recentCleared?'':`${shead('Recent','Clear','data-act="clearRecent"')}<div class="rows">${row('Patek Philippe Nautilus','','data-go="product"')}${row('Private chef, Mykonos','','data-go="service"')}${row('Monaco GP paddock','','data-go="event"')}</div>`}
+ ${shead('Popular now')}<div class="pills wrap">${['Hermès Birkin','Yacht charter','Michelin dining','Rolex Daytona','Private jet','Ski chalet'].map(t=>pill(t,false,`data-act="setq" data-arg="${t}"`)).join('')}</div>
+ <div class="shead"><h3 id="rq">Results for "${esc(q)}"</h3><button class="a" ${NOT('Filters')}>Filters</button></div>
+ <div class="grid">${card('Nautilus 5711/1A','Patek Philippe','Price on request','data-go="product"')}${card('Aquanaut 5167A','Patek Philippe','€ 52,000','data-go="product"')}</div>`}},
+
+watches:()=>{const W=[['Nautilus 5711/1A','Patek Philippe','Price on request'],['Daytona 116500LN','Rolex','€ 38,500'],['Royal Oak 15500','Audemars Piguet','€ 48,000'],['RM 035','Richard Mille','Price on request'],['Aquanaut 5167A','Patek Philippe','€ 52,000'],['Submariner 124060','Rolex','€ 11,900']];
+ const list=S.brand==='All'?W:W.filter(w=>w[1]===S.brand);
+ return{top:top('Watches'),tab:'home',tight:true,
+ body:`<div class="pills">${pill('Filters',false,NOT('The filter sheet'))}${pill('Sort: Featured',false,NOT('Sorting'))}${pill('In stock',false,NOT('Stock filtering'))}</div>
+ <div class="pills">${['All','Patek Philippe','Rolex','Audemars Piguet','Richard Mille'].map(b=>pill(b,S.brand===b,`data-act="brand" data-arg="${b}"`)).join('')}</div>
+ <p class="s13 sub num">${S.brand==='All'?'Showing 6 of 128 pieces':`${list.length} ${S.brand} piece${list.length>1?'s':''}`}</p>
+ <div class="grid">${list.map(w=>card(...w,'data-go="product"')).join('')}</div>`}},
+
+product:()=>({top:top('Details'),gap:12,
+ body:`${ph(280,16)}<div class="dots"><i class="on"></i><i></i><i></i></div>
+ <p class="s13 sub">Patek Philippe</p><h2 class="h2">Nautilus 5711/1A</h2><p class="s17 b600">Price on request</p>
+ ${shead('Details')}<div class="rows">${row('Condition','Unworn')}${row('Year','2021')}${row('Box & papers','Included')}${row('Delivery','5–7 days')}</div>`,
+ footer:`<div class="hrow"><button class="iconbtn" data-act="save" aria-label="Save to wishlist" aria-pressed="${S.saved}">${ic('heart',22,S.saved?'currentColor':'none')}</button>${btn('Request this','primary','data-act="submit" data-arg="Patek Nautilus 5711/1A" data-go="sent"')}</div>`}),
+
+service:()=>({top:top('Service'),gap:12,
+ body:`${ph(200,16)}<p class="s13 sub">Dining · Private chef</p><h2 class="h2">Private chef at your villa</h2><p class="s14 sub">Mykonos · 4–6 hours · from € 2,400</p>
+ ${shead("What's included")}<div class="checks">${['Menu designed with you','Sommelier pairing','Full setup and clean-up'].map(t=>`<div class="hrow" style="gap:10px">${ic('check',18)}<span>${t}</span></div>`).join('')}</div>
+ ${shead('Your booking')}<div class="two">${field('sv-date','Date','Select date')}${field('sv-guests','Guests','2 guests')}</div>`,
+ footer:btn('Request booking','primary','data-act="submit" data-arg="Private chef, Mykonos" data-go="sent"')}),
+
+event:()=>({top:top('Exclusive'),gap:12,
+ body:`${ph(200,16)}<div class="hrow" style="gap:8px">${spill('Members only',true)}${S.rsvp?spill("You're going",true)+spill('11 spots left'):spill('12 spots left')}</div>
+ <h2 class="h2">Private viewing at the Monaco Yacht Show</h2><p class="s14 sub">Sep 24 · Monaco · Gold & Black tiers</p>
+ <p>Board three superyachts with a broker, followed by dinner on deck.</p>
+ <div class="rows">${row('Date','Wed, Sep 24')}${row('Location','Port Hercule')}${row('Dress code','Smart casual')}${row('Guests','+1 allowed')}</div>`,
+ footer:S.rsvp?`<p class="fine">You're on the list. Your concierge will send details a week before.</p>${btn('Cancel RSVP','secondary','data-act="rsvp"')}`
+ :btn('RSVP','primary','data-act="rsvp"')+btn('Ask a question','ghost','data-go="conversation"')}),
+
+ask:()=>({top:top('New request'),tight:true,
+ body:`<div class="stack"><h2 class="h2">What can we arrange?</h2><p class="s14 sub">Describe anything: a product, a trip, a table. Your concierge takes it from here.</p></div>
+ ${field('ask-req','Your request','e.g. A table for 4 at Noma this Friday…','text',true)}
+ <p class="label">Category (optional)</p><div class="pills">${['Product','Travel','Dining','Event','Other'].map(c=>pill(c,S.askCat===c,`data-act="askCat" data-arg="${c}"`)).join('')}</div>
+ <p class="label">Photos or links</p><div class="attach"><button class="addph" aria-label="Add photo" ${NOT('Photo upload')}>${ic('camera',22)}</button>${ph(64,10,'width:64px')}</div>
+ <div class="two">${field('ask-budget','Budget','€ 5k – 10k')}${field('ask-date','Needed by','Select date')}</div>
+ ${field('ask-loc','Location','City or address')}
+ <p class="label">Urgency</p><div class="pills">${['Flexible','This week','Urgent'].map(u=>pill(u,S.urg===u,`data-act="urg" data-arg="${u}"`)).join('')}</div>`,
+ footer:btn('Review request','primary','data-go="review"')}),
+
+review:()=>{const v=(k,d)=>esc(S.f[k]||d);return{top:top('Review'),gap:16,
+ body:`<h2 class="h2">Check your request</h2>
+ <div class="box" style="gap:14px">${[['Request',v('ask-req','A table for 4 at Noma, Friday 14 Nov, around 8pm. Window seat if possible.')],['Category',esc(S.askCat||'Dining')],['Budget',v('ask-budget','€ 1,000 – 2,000')],['Needed by',v('ask-date','Fri, 14 Nov')],['Location',v('ask-loc','Copenhagen')],['Urgency',S.urg],['Reply via','Chat']].map(([k,x])=>`<div class="stack g2"><p class="s12 sub">${k}</p><p>${x}</p></div>`).join('')}</div>
+ <div class="attach">${ph(64,10,'width:64px')}${ph(64,10,'width:64px')}</div>
+ <p class="s13 sub">A concierge usually replies within 15 minutes.</p>`,
+ footer:btn('Submit request','primary',`data-act="submit" data-arg="${esc((S.f['ask-req']||'Table at Noma for 4').slice(0,38))}" data-go="sent"`)+btn('Edit','ghost','data-back')}},
+
+sent:()=>({center:true,
+ body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Request sent</h2><p class="s15 sub">Ref #PR-${2040+S.newReqs.length} · Elena, your concierge, will reply in chat shortly.</p>${spill('Submitted')}`,
+ footer:btn('Open chat','primary','data-go="conversation"')+btn('View in Requests','secondary','data-tab="requests"')}),
+
+requests:()=>{const t=S.reqTab;let body=`<div class="pills">${['Active','Completed','Drafts'].map(x=>pill(x,t===x,`data-act="reqTab" data-arg="${x}"`)).join('')}</div>`;
+ const rc=(title,meta,price,st,act,a)=>`<div class="box line" ${TAP} ${a} style="gap:6px;cursor:pointer"><div class="hrow"><p class="grow s15 b600">${esc(title)}</p>${spill(st,act)}</div><p class="s13 sub">${meta}</p><p class="s15 b500 num">${price}</p></div>`;
+ if(t==='Active'){body+=S.newReqs.map(r=>rc(r,'Just now','Awaiting quote','Submitted',false,`data-toast="It opens the same detail screen once a quote arrives."`)).join('')
+  +rc('Patek Nautilus 5711/1A','Product · Updated 2h ago',S.paid?(S.pay==='deposit'?'€ 42,600 deposit paid':'€ 142,000 paid'):'€ 142,000',S.paid?'Paid':'Quote sent',!S.paid,'data-go="request"')
+  +rc('Table at Noma for 4','Dining · Updated 10m ago','Budget € 1,000 – 2,000','In review',false,'data-toast="Only the Patek request is wired in the lo-fi."')
+  +rc('Gstaad chalet, Christmas','Travel · Updated yesterday','€ 65,000','Needs info',true,'data-go="conversation"')
+  +rc('Chauffeur, FRA airport','Service · Today 18:30','€ 280','In progress',false,'data-toast="Only the Patek request is wired in the lo-fi."');}
+ else if(t==='Completed'){body+=rc('Dinner at Le Cinq','Dining · Oct 30','€ 1,240','Completed',false,'data-toast="Receipts and rebooking live here. Not in the lo-fi yet."')+rc('Hermès Kelly 25','Product · Sep 12','€ 24,500','Delivered',false,'data-toast="Receipts and rebooking live here. Not in the lo-fi yet."');}
+ else body+=`<div class="empty"><p class="s17 b600">No drafts</p><p class="s14 sub">Requests you start but don't send are saved here.</p><div style="width:200px;margin-top:8px">${btn('New request','secondary','data-go="ask"')}</div></div>`;
+ return{top:top('Requests',true),tab:'requests',tight:true,body}},
+
+request:()=>{const cur=S.paid?4:2;const steps=[['Submitted','Nov 8'],['In review','Nov 8'],['Quote sent','Nov 9'],['Accepted',S.paid?'Today':''],['Paid',S.paid?'Today':''],['In progress',''],['Delivered','']];
+ return{top:top('Request'),gap:16,
+ body:`<div class="hrow" style="align-items:flex-start"><div class="grow stack" style="gap:4px"><p class="s20 b700">Patek Nautilus 5711/1A</p><p class="s13 sub">#PR-2038 · Product</p></div>${spill(S.paid?'Paid':'Quote sent',!S.paid)}</div>
+ ${S.paid?`<div class="box"><p class="s13 sub">${S.pay==='deposit'?'Deposit paid':'Paid in full'} · Card •• 4417</p><p class="s28 b700 num">${S.pay==='deposit'?'€ 42,600':'€ 142,000'}</p><p class="s14">${S.pay==='deposit'?'€ 99,400 is due on delivery. ':''}Elena is arranging insured delivery to Frankfurt, Nov 18 – 20.</p>${btn('Download receipt','secondary',NOT('The receipt viewer'))}</div>`
+ :`<div class="box"><p class="s13 sub">Quote from Elena</p><p class="s28 b700 num">€ 142,000</p><p class="s14">Unworn 2021, full set. Includes insured delivery to Frankfurt. Valid until 14 Nov.</p><div class="hrow" style="gap:10px">${btn('Accept','primary','data-go="checkout"')}${btn('Discuss','secondary','data-go="conversation"')}</div></div>`}
+ ${shead('Status')}<div class="tl">${steps.map(([l,d],i)=>{const c=i<cur?'done':i===cur?'now':'todo';return`<div class="${c}"><i class="d ${c}"></i><span class="x">${l}</span><span class="s13 sub">${d}</span></div>`}).join('')}</div>
+ <div class="rows">${row('Documents','2 files',NOT('The document viewer'))}${row('Chat with Elena','','data-go="conversation"')}</div>`}},
+
+checkout:()=>{const dep=S.pay==='deposit';const due=dep?42600:142000;return{top:top('Checkout'),tight:true,
+ body:`<div class="hrow">${ph(64,10,'width:64px')}<div class="grow stack g2"><p class="s15 b600">Patek Nautilus 5711/1A</p><p class="s14 sub num">€ 142,000</p></div></div>
+ ${shead('Delivery')}<div class="rows">${row('Address','Home · Frankfurt',NOT('Address selection'))}${row('Date','Nov 18 – 20',NOT('The date picker'))}</div>
+ ${shead('Payment')}<div class="pills">${pill('Pay in full',!dep,'data-act="pay" data-arg="full"')}${pill('Deposit 30%',dep,'data-act="pay" data-arg="deposit"')}</div>
+ <div class="rows">${row('Method','Card •• 4417',NOT('Payment method selection'))}</div>
+ <div class="box">${kv('Subtotal','€ 142,000')}${kv('Insured delivery','Included')}${dep?kv('Due on delivery','€ 99,400')+kv('Due today','€ 42,600',true):kv('Total','€ 142,000',true)}</div>
+ <p class="s12 sub">By paying you accept the purchase terms. Deposits are refundable for 48 hours.</p>`,
+ footer:btn('Pay '+eur(due),'primary','data-act="paynow" data-go="paid"')}},
+
+paid:()=>({center:true,
+ body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Payment confirmed</h2><p class="s15 sub">Elena is arranging delivery. You'll get updates in Requests and Chat.</p>
+ <div class="box" style="width:100%;gap:10px;text-align:left;box-sizing:border-box">${kv('Reference','#PR-2038')}${kv('Amount',S.pay==='deposit'?'€ 42,600':'€ 142,000')}${kv('Delivery','Nov 18 – 20')}</div>`,
+ footer:btn('Track request','primary','data-act="trackStack" data-go="request"')+btn('Download receipt','ghost',NOT('The receipt viewer'))}),
+
+inbox:()=>{const th=(t,m,time,un,round,a)=>`<div class="thread" ${TAP} ${a}><span class="ph ${round?'round':''}">${ic('image',20)}</span><div class="m"><div class="hrow between"><p class="s15 b600">${t}</p><span class="s12 sub">${time}</span></div><p>${m}</p></div>${un?'<i class="unread"></i>':''}</div>`;
+ return{top:top('Chat',true),tab:'inbox',gap:12,
+ body:`<label class="search" for="chat-q">${ic('search',20)}<input id="chat-q" placeholder="Search messages" value="${esc(S.f['chat-q'])}" autocomplete="off"></label>
+ <p class="s13 b500 sub">Your concierge</p><div>${th('Elena · Concierge',S.msgs.length?esc(S.msgs[S.msgs.length-1].t):"Of course. I'll confirm the table by 6pm.",'12:04',!S.read,true,'data-go="conversation"')}</div>
+ <p class="s13 b500 sub">Requests</p><div>${th('Patek Nautilus 5711/1A','Quote updated with insured delivery.','11:40',!S.read,false,'data-go="conversation"')}${th('Gstaad chalet, Christmas','Could you share dates and guests?','Yesterday',false,false,'data-toast="Each request has its own thread. Only Patek is wired."')}${th('Table at Noma for 4','Request received.','Mon',false,false,'data-toast="Each request has its own thread. Only Patek is wired."')}</div>`}},
+
+conversation:()=>({top:top('Elena'),gap:12,
+ body:`<div style="text-align:center">${spill('Re: Patek Nautilus 5711/1A')}</div><p class="s12 mute" style="text-align:center">Today 11:32</p>
+ <div class="bub">Good news, I found one. Unworn, 2021, full set.</div>
+ <div class="bub me">Great. Can you include delivery to Frankfurt?</div>
+ <div class="qcard"><p class="s12 sub">Quote</p><p class="s20 b700 num">€ 142,000</p><p class="s13 sub">Insured delivery included</p>${btn('View quote','secondary','data-go="request"')}</div>
+ <div class="bub">Done. Quote updated, valid until 14 Nov.</div>
+ ${S.msgs.map(m=>`<div class="bub ${m.me?'me':''}">${esc(m.t)}</div>`).join('')}`,
+ footer:`<div class="composer"><button aria-label="Attach" ${NOT('Attachments')}>${ic('paperclip')}</button><input id="msg" placeholder="Message" autocomplete="off" aria-label="Message"><button class="sendb" data-act="send" aria-label="Send">${ic('send',20)}</button></div>`}),
+
+profile:()=>({top:top('Profile',true),tab:'profile',gap:16,
+ body:`<div class="member"><p class="k">PERSIMMON</p><div style="height:40px"></div><p class="s22 b600">Gold member</p><p class="s13" style="color:#BFBFBF">Member since 2026 · No. 00412</p></div>
+ <div class="rows">${row('Wishlist',String(4+(S.saved?1:0)),'data-go="wishlist"')}${row('Preferences','','data-go="preferences"')}${row('Addresses','2',NOT('Addresses'))}${row('Payment methods','',NOT('Payment methods'))}${row('Notifications','On',NOT('Notification settings'))}${row('Privacy & security','',NOT('Privacy & security'))}${row('Help & contact','','data-go="conversation"')}</div>
+ ${btn('Sign out','ghost','data-act="signout" data-tab="welcome"')}`}),
+
+wishlist:()=>{let items=[['Birkin 30','Hermès','Price on request','product'],['Chalet Les Arolles','Gstaad · 6 guests','€ 9,000 / night','service'],['Royal Oak 15500','Audemars Piguet','€ 48,000','product'],['Private chef','Mykonos','From € 2,400','service']];
+ if(S.saved)items.unshift(['Nautilus 5711/1A','Patek Philippe','Price on request','product']);
+ if(S.wl==='Products')items=items.filter(i=>i[3]==='product');if(S.wl==='Services')items=items.filter(i=>i[3]==='service');
+ return{top:top('Wishlist'),tight:true,
+ body:`<div class="pills">${['All','Products','Services'].map(x=>pill(x,S.wl===x,`data-act="wl" data-arg="${x}"`)).join('')}</div>
+ <div class="grid">${items.map(i=>card(i[0],i[1],i[2],`data-go="${i[3]}"`)).join('')}</div>`}},
+
+preferences:()=>({top:top('Preferences'),tight:true,
+ body:`${shead('Sizes')}<div class="rows">${row('Clothing','M / 48',NOT('The size picker'))}${row('Shoes','EU 42',NOT('The size picker'))}${row('Ring','54',NOT('The size picker'))}</div>
+ ${shead('Interests')}<div class="pills wrap">${['Watches','Art','Villas','Fine dining','Yachts','Cars','Wellness'].map(t=>pill(t,S.interests.has(t),`data-act="interest" data-arg="${t}"`)).join('')}</div>
+ ${shead('Food & drink')}<div class="rows">${row('Dietary','Vegetarian',NOT('Dietary settings'))}${row('Favorite cuisine','Japanese',NOT('Cuisine settings'))}</div>
+ ${shead('Favorite brands')}<div class="pills wrap">${['Hermès','Patek Philippe','Loro Piana','Aman','Bottega Veneta'].map(t=>pill(t,S.brands.has(t),`data-act="favBrand" data-arg="${t}"`)).join('')}</div>`})
+};
+
+/* ---------- actions ---------- */
+const tog=(set,v)=>set.has(v)?set.delete(v):set.add(v);
+const ACT={
+ applyTab:a=>S.applyTab=a, taste:a=>tog(S.taste,a), brand:a=>S.brand=a,
+ save:()=>{S.saved=!S.saved;toast(S.saved?'Saved to your wishlist.':'Removed from your wishlist.')},
+ rsvp:()=>{S.rsvp=!S.rsvp;toast(S.rsvp?"RSVP confirmed. You're on the list.":'RSVP cancelled.')},
+ askCat:a=>S.askCat=S.askCat===a?'':a, urg:a=>S.urg=a, reqTab:a=>S.reqTab=a, pay:a=>S.pay=a,
+ paynow:()=>{S.paid=true}, trackStack:()=>{stack=['requests']},
+ submit:a=>{if(a&&!S.newReqs.includes(a)&&!a.startsWith('Patek'))S.newReqs.unshift(a)},
+ clearRecent:()=>S.recentCleared=true,
+ setq:a=>{S.f.q=a},
+ wl:a=>S.wl=a, interest:a=>tog(S.interests,a), favBrand:a=>tog(S.brands,a),
+ signout:()=>{reset()},
+ send:()=>{const el=document.getElementById('msg');const t=(el&&el.value||'').trim();if(!t)return;S.msgs.push({me:true,t});
+  setTimeout(()=>{S.msgs.push({me:false,t:"Noted. I'll come back to you shortly."});if(cur==='conversation')render('conversation',true)},1100)}
+};
+
+/* ---------- navigation ---------- */
+const phone=document.getElementById('phone');
+let cur=null,stack=[];
+function go(id){if(cur&&id!==cur)stack.push(cur);show(id)}
+function back(){show(stack.pop()||'home')}
+function show(id){render(id);try{if(location.hash.slice(1)!==id)location.hash=id}catch(e){}}
+window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(id&&id!==cur&&R[id])render(id)});
+
+function render(id,keepScroll){
+ if(!R[id])id='welcome';
+ const same=id===cur;const prev=phone.querySelector('.content');const sc=prev?prev.scrollTop:0;
+ if(id==='conversation')S.read=true;
+ cur=id;const s=R[id]();
+ phone.innerHTML=`<div class="sb"><span>9:41</span><i></i></div>${s.top||''}<div class="content ${s.center?'center':''} ${s.tight?'tight':''}" ${s.gap?`style="gap:${s.gap}px"`:''}>${s.body}</div>${s.footer?`<div class="footer">${s.footer}</div>`:''}${s.tab?tabs(s.tab):''}<div class="toast" id="toast" role="status" aria-live="polite"></div>`;
+ const c=phone.querySelector('.content');
+ if(id==='conversation')c.scrollTop=c.scrollHeight;else if(same||keepScroll)c.scrollTop=sc;
+ const m=META[id];
+ document.getElementById('capCode').textContent=m.code;
+ document.getElementById('capName').textContent=m.name;
+ document.getElementById('capSec').textContent='· '+m.sec;
+ document.querySelectorAll('.scr').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
+ if(pt)showToast();
+}
+
+let tt,pt=null;
+function toast(t){pt=t;showToast()}
+function showToast(){const el=document.getElementById('toast');if(!el||!pt)return;el.textContent=pt;requestAnimationFrame(()=>el.classList.add('show'));clearTimeout(tt);tt=setTimeout(()=>{el.classList.remove('show');pt=null},2200)}
+function flash(){phone.classList.remove('flash');void phone.offsetWidth;phone.classList.add('flash');setTimeout(()=>phone.classList.remove('flash'),700)}
+
+phone.addEventListener('click',e=>{
+ const t=e.target.closest('[data-go],[data-back],[data-act],[data-toast],[data-tab]');
+ if(!t){if(!e.target.closest('input,textarea,label'))flash();return}
+ const d=t.dataset;
+ if(d.act){ACT[d.act](d.arg,t)}
+ if(d.toast)toast(d.toast);
+ if(d.tab){stack=[];show(d.tab)}
+ else if(d.go)go(d.go);
+ else if('back' in d)back();
+ else if(d.act)render(cur,true);
+});
+phone.addEventListener('keydown',e=>{
+ if(e.target.id==='msg'&&e.key==='Enter'){e.preventDefault();ACT.send();render('conversation');document.getElementById('msg')?.focus();return}
+ if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute('role')==='button'){e.preventDefault();e.target.click()}
+ if(e.target.id&&e.target.id.startsWith('otp')&&e.key==='Backspace'&&!e.target.value){const p=document.getElementById('otp'+(+e.target.id.slice(3)-1));p?.focus()}
+});
+phone.addEventListener('input',e=>{
+ const el=e.target;if(!el.id||el.id==='msg')return;
+ if(el.id.startsWith('otp')){el.value=el.value.replace(/\D/g,'').slice(-1);S.f[el.id]=el.value;if(el.value){const n=document.getElementById('otp'+(+el.id.slice(3)+1));n?.focus()}return}
+ S.f[el.id]=el.value;
+ if(el.id==='q'){const h=document.getElementById('rq');if(h)h.textContent=`Results for "${el.value}"`}
+});
+
+/* ---------- navigator ---------- */
+document.getElementById('list').innerHTML=FLOWS.map(([s,items],i)=>`<div class="flow"><h4>${s}</h4>${items.map(([id,code,name])=>`<button class="scr" data-id="${id}"><span class="code">${code}</span>${name}</button>`).join('')}</div>`).join('');
+document.getElementById('list').addEventListener('click',e=>{const b=e.target.closest('.scr');if(!b)return;stack=[];show(b.dataset.id);document.body.classList.remove('navopen')});
+const hot=document.getElementById('hotToggle');
+hot.addEventListener('change',()=>{document.body.classList.toggle('hot',hot.checked);try{localStorage.setItem('psm-hot',hot.checked?'1':'0')}catch(e){}});
+try{if(localStorage.getItem('psm-hot')==='1'){hot.checked=true;document.body.classList.add('hot')}}catch(e){}
+document.getElementById('restart').innerHTML=ic('rotate',16)+'Restart';
+document.getElementById('restart').addEventListener('click',()=>{reset();stack=[];show('welcome');document.body.classList.remove('navopen')});
+document.getElementById('navOpen').innerHTML=ic('layers',14)+'Screens';
+document.getElementById('navOpen').addEventListener('click',()=>document.body.classList.add('navopen'));
+document.getElementById('navClose').innerHTML=ic('x',18);
+document.getElementById('navClose').addEventListener('click',()=>document.body.classList.remove('navopen'));
+const step=d=>{const i=ORDER.findIndex(o=>o.id===cur);const n=ORDER[(i+d+ORDER.length)%ORDER.length];stack=[];show(n.id)};
+document.getElementById('prev').innerHTML=ic('chevL',18);document.getElementById('next').innerHTML=ic('chevR',18);
+document.getElementById('prev').addEventListener('click',()=>step(-1));document.getElementById('next').addEventListener('click',()=>step(1));
+document.addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea'))return;if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1)});
+
+/* ---------- fit phone to the stage ---------- */
+const stage=document.getElementById('stage'),wrap=document.getElementById('wrap');
+function fit(){if(matchMedia('(max-width:640px)').matches){phone.style.transform='';wrap.style.width='';wrap.style.height='';return}
+ const r=stage.getBoundingClientRect();const s=Math.min(1,(r.height-90)/812,(r.width-40)/375);
+ phone.style.transform=`scale(${s})`;wrap.style.width=375*s+'px';wrap.style.height=812*s+'px'}
+addEventListener('resize',fit);fit();
+
+render(R[location.hash.slice(1)]?location.hash.slice(1):'welcome');
+</script>
+
+</body>
+</html>
