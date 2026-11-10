@@ -1,8 +1,8 @@
-# Persimmon
+# Percimon
 
-Lo-fi clickable prototype for Persimmon, a members-only luxury concierge app.
+Lo-fi clickable prototype for Percimon, a luxury concierge app.
 
-The whole prototype is one static file, `index.html`: 23 grayscale screens across Onboarding, Discover, Ask, Requests, Chat and Profile.
+The whole prototype is one static file, `index.html`: 24 grayscale screens across Onboarding, Discover, Ask, Requests, Chat and Profile.
 
 ## View it
 
@@ -14,6 +14,6 @@ Import this repo at vercel.com/new. Leave the framework preset as "Other" with n
 
 ## Using the prototype
 
-- On desktop, the left panel lists every screen; arrow keys step through them in order.
+- On desktop, the left panel lists every screen and its states (pick one to jump straight there); arrow keys step through screens in order.
 - On a phone, it runs full-screen; the "Screens" button at the top opens the list.
 - Tap empty space to flash what's clickable, or turn on "Show hotspots".

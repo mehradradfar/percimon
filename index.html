@@ -6,7 +6,7 @@
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-<title>Persimmon Lo-Fi Prototype</title>
+<title>Percimon Lo-Fi Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -89,6 +89,13 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 .btn{height:52px;width:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex:none}
 .hrow>.btn{flex:1}
+.sso{height:52px;width:100%;border-radius:10px;box-shadow:inset 0 0 0 1px var(--ink);display:flex;align-items:center;justify-content:center;gap:10px;font-size:16px;font-weight:600;flex:none}
+.sso .logo{width:20px;height:20px;border-radius:5px;background:var(--pfill2)}
+.ssorow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.divider{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--sub)}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--pline)}
+.linkline{font-size:13px;color:var(--sub);text-align:center;padding:6px 0}
+.linkline b{color:var(--ink);font-weight:600}
 .btn.primary{background:var(--ink);color:#fff}
 .btn.secondary{box-shadow:inset 0 0 0 1px var(--ink)}
 .iconbtn{width:52px;height:52px;flex:none;border-radius:10px;box-shadow:inset 0 0 0 1px var(--ink);display:grid;place-items:center}
@@ -217,9 +224,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 <div class="app">
   <aside class="nav" id="nav" aria-label="Screens">
     <div class="nav-head">
-      <div class="brand"><span class="fruit"></span>Persimmon</div>
+      <div class="brand"><span class="fruit"></span>Percimon</div>
       <button class="close" id="navClose" aria-label="Close screen list"></button>
-      <p id="navMeta">Lo-fi prototype · v0.2 · 23 screens</p>
+      <p id="navMeta">Lo-fi prototype · v0.3 · 23 screens</p>
     </div>
     <div class="ctrls">
       <label class="switch" for="hotToggle"><input type="checkbox" id="hotToggle"> Show hotspots</label>
@@ -266,7 +273,7 @@ const TAP='role="button" tabindex="0"';
 
 /* ---------- screen index ---------- */
 const FLOWS=[
- ['Onboarding',[['welcome','1.1','Welcome'],['apply','1.2','Apply / Invite code'],['verify','1.3','Verify'],['taste','1.4','Your taste'],['received','1.5','Application received']]],
+ ['Onboarding',[['welcome','1.1','Welcome'],['signup','1.2','Sign up'],['signin','1.3','Sign in'],['verify','1.4','Verify'],['taste','1.5','Your taste'],['ready',"1.6","You're in"]]],
  ['Discover',[['home','2.1','Home'],['search','2.2','Search'],['watches','2.3','Category list'],['product','2.4','Product detail'],['service','2.5','Service detail'],['event','2.6','Exclusive event']]],
  ['Ask',[['ask','3.1','Request form'],['review','3.2','Review'],['sent','3.3','Submitted']]],
  ['Requests',[['requests','4.1','Requests list'],['request','4.2','Request detail'],['checkout','4.3','Checkout'],['paid','4.4','Payment confirmed']]],
@@ -278,7 +285,7 @@ const META=Object.fromEntries(ORDER.map(o=>[o.id,o]));
 
 /* ---------- state ---------- */
 let S;
-function reset(){S={applyTab:'apply',f:{otp0:'4',otp1:'8',q:'Patek'},taste:new Set(['Watches','Art','Villas','Fine dining']),
+function reset(){S={auth:'signup',signinBy:'Email',f:{otp0:'4',otp1:'8',q:'Patek'},taste:new Set(['Watches','Art','Villas','Fine dining']),
  brand:'All',saved:false,rsvp:false,askCat:'',urg:'Flexible',reqTab:'Active',pay:'full',paid:false,newReqs:[],
  msgs:[],read:false,wl:'All',interests:new Set(['Watches','Art','Villas','Fine dining','Yachts']),brands:new Set(),recentCleared:false}}
 reset();
@@ -301,38 +308,49 @@ const kv=(k,v,bold)=>`<div class="hrow between"><span class="s14 ${bold?'b600':'
 const tabs=a=>`<nav class="tabbar">${[['home','Discover','compass'],['requests','Requests','clip'],['ask','Ask','plus'],['inbox','Chat','msg'],['profile','Profile','user']].map(([id,l,i])=>
  id==='ask'?`<button class="tab" data-go="ask" aria-label="New request"><span class="askb">${ic('plus')}</span></button>`
  :`<button class="tab ${a===id?'on':''}" data-tab="${id}">${ic(i)}<span>${l}</span></button>`).join('')}</nav>`;
+const sso=(l,a='')=>`<button class="sso" ${a}><i class="logo"></i>${l}</button>`;
+const mask=e=>{e=(e||'').trim();if(!e.includes('@'))return 'n•••@email.com';const [u,d]=e.split('@');return u.slice(0,1)+'•••@'+d};
 const NOT=w=>`data-toast="${w} isn't in the lo-fi yet."`;
 const eur=n=>'€ '+n.toLocaleString('en-US');
 
 /* ---------- screens ---------- */
 const R={
-welcome:()=>({body:`${ph(320,20)}<p class="k">PERSIMMON</p><h2 class="h1">Everything, arranged.</h2><p class="s16 sub">A private concierge for luxury goods, travel and experiences.</p>`,
- footer:btn('Apply for membership','primary','data-act="applyTab" data-arg="apply" data-go="apply"')+btn('I have an invite code','secondary','data-act="applyTab" data-arg="invite" data-go="apply"')+btn('Sign in','ghost','data-tab="home"')}),
+welcome:()=>({body:`${ph(280,20)}<p class="k">PERCIMON</p><h2 class="h1">Everything, arranged.</h2><p class="s16 sub">A private concierge for luxury goods, travel and experiences.</p>`,
+ footer:btn('Create account','primary','data-act="auth" data-arg="signup" data-go="signup"')+`<div class="divider">or continue with</div><div class="ssorow">${sso('Apple','data-act="auth" data-arg="signup" data-toast="Signed up with Apple." data-go="taste"')}${sso('Google','data-act="auth" data-arg="signup" data-toast="Signed up with Google." data-go="taste"')}</div>`+btn('I already have an account','ghost','data-go="signin"')}),
 
-apply:()=>{const inv=S.applyTab==='invite';return{top:topBar('Membership'),tight:true,
- body:`<div class="pills">${pill('Apply',!inv,'data-act="applyTab" data-arg="apply"')}${pill('Invite code',inv,'data-act="applyTab" data-arg="invite"')}</div>`+(inv
- ?`<div class="stack"><h2 class="h2">Enter your invite</h2><p class="s14 sub">Invite codes come from a current member and work once.</p></div>${field('inv-code','Invite code','e.g. PSM-4821')}${field('inv-phone','Phone','+49','tel')}`
- :`<div class="stack"><h2 class="h2">Tell us about you</h2><p class="s14 sub">Every membership is reviewed personally. It takes 2 minutes.</p></div>${field('ap-name','Full name','First and last name')}${field('ap-email','Email','name@email.com','email')}${field('ap-phone','Phone','+49','tel')}${field('ap-city','City','Where do you live?')}${field('ap-ref','Referred by (optional)','Member name or code')}`),
- footer:btn(inv?'Continue':'Submit application','primary','data-go="verify"')+`<p class="fine">By continuing you accept the Terms and Privacy Policy.</p>`}},
+signup:()=>({top:topBar('Create account'),gap:16,
+ body:`<div class="stack"><h2 class="h2">Create your account</h2><p class="s14 sub">Your concierge is one message away.</p></div>
+ ${sso('Continue with Apple','data-act="auth" data-arg="signup" data-toast="Signed up with Apple." data-go="taste"')}${sso('Continue with Google','data-act="auth" data-arg="signup" data-toast="Signed up with Google." data-go="taste"')}
+ <div class="divider">or sign up with email</div>
+ ${field('su-name','Full name','First and last name')}${field('su-email','Email','name@email.com','email')}${field('su-invite','Invite code (optional)','e.g. PCM-4821')}`,
+ footer:btn('Create account','primary','data-act="auth" data-arg="signup" data-go="verify"')+`<p class="fine">By continuing you accept the Terms and Privacy Policy.</p><button class="linkline" data-go="signin">Already a member? <b>Sign in</b></button>`}),
 
-verify:()=>({top:topBar('Verify'),
- body:`<div class="stack"><h2 class="h2">Enter the code</h2><p class="s15 sub">We sent a 6-digit code to +49 ••• ••• 21</p></div>
+signin:()=>{const ph_=S.signinBy==='Phone';return{top:topBar('Sign in'),gap:16,
+ body:`<div class="stack"><h2 class="h2">Welcome back</h2><p class="s14 sub">Sign in the way you joined.</p></div>
+ ${sso('Continue with Apple','data-toast="Signed in with Apple." data-tab="home"')}${sso('Continue with Google','data-toast="Signed in with Google." data-tab="home"')}
+ <div class="divider">or with a one-time code</div>
+ <div class="pills">${pill('Email',!ph_,'data-act="signinBy" data-arg="Email"')}${pill('Phone',ph_,'data-act="signinBy" data-arg="Phone"')}</div>
+ ${ph_?field('si-phone','Phone','+49','tel'):field('si-email','Email','name@email.com','email')}`,
+ footer:btn('Send code','primary','data-act="auth" data-arg="signin" data-go="verify"')+`<button class="linkline" data-go="signup">New to Percimon? <b>Create an account</b></button>`}},
+
+verify:()=>{const signin=S.auth==='signin';const to=signin&&S.signinBy==='Phone'?'+49 ••• ••• 21':mask(S.f[signin?'si-email':'su-email']);return{top:topBar('Verify'),
+ body:`<div class="stack"><h2 class="h2">Enter the code</h2><p class="s15 sub">We sent a 6-digit code to ${esc(to)}</p></div>
  <div class="otp">${[0,1,2,3,4,5].map(i=>`<input id="otp${i}" inputmode="numeric" maxlength="1" aria-label="Digit ${i+1}" value="${esc(S.f['otp'+i])}">`).join('')}</div>
- <button class="s14 b500 sub" style="align-self:flex-start" data-toast="New code sent to +49 ••• ••• 21.">Resend code in 0:30</button>`,
- footer:btn('Verify','primary','data-go="taste"')}),
+ <button class="s14 b500 sub" style="align-self:flex-start" data-toast="New code sent to ${esc(to)}.">Resend code in 0:30</button>`,
+ footer:signin?btn('Verify','primary','data-toast="Welcome back." data-tab="home"'):btn('Verify','primary','data-go="taste"')}},
 
 taste:()=>({top:topBar('Your taste'),tight:true,
  body:`<div class="prog"><i class="on"></i><i class="on"></i><i></i></div><p class="s13 b500 sub">Step 2 of 3</p>
  <div class="stack"><h2 class="h2">What are you into?</h2><p class="s15 sub">Pick a few. Your concierge will tailor suggestions.</p></div>
  <div class="pills wrap">${['Watches','Jewelry','Fashion','Art','Cars','Private jets','Yachts','Villas','Fine dining','Events','Wellness','Chauffeur'].map(t=>pill(t,S.taste.has(t),`data-act="taste" data-arg="${t}"`)).join('')}</div>
  ${shead('Sizes')}<div class="rows">${row('Clothing','Select',NOT('The size picker'))}${row('Shoes','Select',NOT('The size picker'))}${row('Ring','Select',NOT('The size picker'))}</div>`,
- footer:btn('Continue','primary','data-go="received"')+btn('Skip for now','ghost','data-go="received"')}),
+ footer:btn('Continue','primary','data-go="ready"')+btn('Skip for now','ghost','data-go="ready"')}),
 
-received:()=>({center:true,
- body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Application received</h2><p class="s15 sub">Our team reviews every membership personally. We'll be in touch within 48 hours.</p>${spill('In review')}`,
- footer:btn('Talk to a concierge','secondary','data-go="conversation"')+btn('Preview the approved app','ghost','data-tab="home"')+btn('Back to start','ghost','data-tab="welcome"')}),
+ready:()=>({center:true,
+ body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Welcome to Percimon</h2><p class="s15 sub">Your concierge, Elena, is ready whenever you are.</p>${spill('Member',true)}`,
+ footer:btn('Start exploring','primary','data-tab="home"')+btn('Meet your concierge','secondary','data-go="conversation"')}),
 
-home:()=>({top:topBar('Persimmon',true),tab:'home',gap:18,
+home:()=>({top:topBar('Percimon',true),tab:'home',gap:18,
  body:`<div class="hrow between"><div class="stack g2"><p class="s13 sub">Good evening</p><p class="s22 b600">Welcome back</p></div>${spill('Gold member',true)}</div>
  <button class="search" data-go="search">${ic('search',20)}<span>Search watches, villas, chefs…</span>${ic('sliders',20)}</button>
  <div class="tile" ${TAP} data-go="service">${ph(180,16)}<p class="s17 b600">Curated · Winter in Gstaad</p><p class="s13 sub">Chalets, private ski guides and après dining</p></div>
@@ -447,7 +465,7 @@ conversation:()=>({top:topBar('Elena'),gap:12,
  footer:`<div class="composer"><button aria-label="Attach" ${NOT('Attachments')}>${ic('paperclip')}</button><input id="msg" placeholder="Message" autocomplete="off" aria-label="Message"><button class="sendb" data-act="send" aria-label="Send">${ic('send',20)}</button></div>`}),
 
 profile:()=>({top:topBar('Profile',true),tab:'profile',gap:16,
- body:`<div class="member"><p class="k">PERSIMMON</p><div style="height:40px"></div><p class="s22 b600">Gold member</p><p class="s13" style="color:#BFBFBF">Member since 2026 · No. 00412</p></div>
+ body:`<div class="member"><p class="k">PERCIMON</p><div style="height:40px"></div><p class="s22 b600">Gold member</p><p class="s13" style="color:#BFBFBF">Member since 2026 · No. 00412</p></div>
  <div class="rows">${row('Wishlist',String(4+(S.saved?1:0)),'data-go="wishlist"')}${row('Preferences','','data-go="preferences"')}${row('Addresses','2',NOT('Addresses'))}${row('Payment methods','',NOT('Payment methods'))}${row('Notifications','On',NOT('Notification settings'))}${row('Privacy & security','',NOT('Privacy & security'))}${row('Help & contact','','data-go="conversation"')}</div>
  ${btn('Sign out','ghost','data-act="signout" data-tab="welcome"')}`}),
 
@@ -468,7 +486,7 @@ preferences:()=>({top:topBar('Preferences'),tight:true,
 /* ---------- actions ---------- */
 const tog=(set,v)=>set.has(v)?set.delete(v):set.add(v);
 const ACT={
- applyTab:a=>S.applyTab=a, taste:a=>tog(S.taste,a), brand:a=>S.brand=a,
+ auth:a=>S.auth=a, signinBy:a=>S.signinBy=a, taste:a=>tog(S.taste,a), brand:a=>S.brand=a,
  save:()=>{S.saved=!S.saved;toast(S.saved?'Saved to your wishlist.':'Removed from your wishlist.')},
  rsvp:()=>{S.rsvp=!S.rsvp;toast(S.rsvp?"RSVP confirmed. You're on the list.":'RSVP cancelled.')},
  askCat:a=>S.askCat=S.askCat===a?'':a, urg:a=>S.urg=a, reqTab:a=>S.reqTab=a, pay:a=>S.pay=a,
@@ -538,8 +556,9 @@ phone.addEventListener('input',e=>{
 /* ---------- screen states: [label, set state, is active] ---------- */
 const OTP=['4','8','2','9','1','5'];
 const STATES={
- apply:[['Apply',s=>s.applyTab='apply',s=>s.applyTab==='apply'],['Invite code',s=>s.applyTab='invite',s=>s.applyTab==='invite']],
- verify:[['Partly entered',s=>OTP.forEach((d,i)=>s.f['otp'+i]=i<2?d:''),s=>!s.f.otp5],['Code complete',s=>OTP.forEach((d,i)=>s.f['otp'+i]=d),s=>!!s.f.otp5]],
+ signup:[['Empty',s=>['su-name','su-email','su-invite'].forEach(k=>s.f[k]=''),s=>!s.f['su-name']],['Filled in',s=>Object.assign(s.f,{'su-name':'Nadia Karimi','su-email':'nadia@email.com','su-invite':'PCM-4821'}),s=>!!s.f['su-name']]],
+ signin:[['Email code',s=>{s.signinBy='Email';s.auth='signin'},s=>s.signinBy==='Email'],['Phone code',s=>{s.signinBy='Phone';s.auth='signin'},s=>s.signinBy==='Phone']],
+ verify:[['After sign-up',s=>s.auth='signup',s=>s.auth==='signup'],['After sign-in',s=>s.auth='signin',s=>s.auth==='signin'],['Partly entered',s=>OTP.forEach((d,i)=>s.f['otp'+i]=i<2?d:''),s=>!s.f.otp5],['Code complete',s=>OTP.forEach((d,i)=>s.f['otp'+i]=d),s=>!!s.f.otp5]],
  taste:[['Suggested picks',s=>s.taste=new Set(['Watches','Art','Villas','Fine dining']),s=>s.taste.size>0],['Nothing picked',s=>s.taste=new Set(),s=>s.taste.size===0]],
  search:[['With recent searches',s=>s.recentCleared=false,s=>!s.recentCleared],['Recent cleared',s=>s.recentCleared=true,s=>s.recentCleared]],
  watches:[['All brands',s=>s.brand='All',s=>s.brand==='All'],['Filtered by brand',s=>s.brand='Rolex',s=>s.brand!=='All']],
@@ -560,7 +579,7 @@ const STATES={
 const nStates=Object.values(STATES).reduce((a,v)=>a+v.length,0);
 
 /* ---------- navigator ---------- */
-document.getElementById('navMeta').textContent=`Lo-fi prototype · v0.2 · ${ORDER.length} screens · ${nStates} states`;
+document.getElementById('navMeta').textContent=`Lo-fi prototype · v0.3 · ${ORDER.length} screens · ${nStates} states`;
 document.getElementById('list').innerHTML=FLOWS.map(([s,items])=>`<div class="flow"><h4>${s}</h4>${items.map(([id,code,name])=>`<button class="scr" data-id="${id}"><span class="code">${code}</span>${name}</button>${STATES[id]?`<div class="states">${STATES[id].map(([l],i)=>`<button class="st" data-id="${id}" data-i="${i}">${l}</button>`).join('')}</div>`:''}`).join('')}</div>`).join('');
 document.getElementById('list').addEventListener('click',e=>{
  const st=e.target.closest('.st'),b=e.target.closest('.scr');
