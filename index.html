@@ -6,21 +6,21 @@
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-<title>Percimon Lo-Fi Prototype</title>
+<title>Percimon Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 /* Layout: flow navigator on the left, one scaled phone on a quiet canvas; on phones the prototype runs full-screen. */
 :root{
-  --bg:#E8E9EC; --panel:#F6F6F8; --fg:#18191C; --muted:#6A6C73; --line:#D4D6DB; --accent:#D2502A;
-  --hot:rgba(210,80,42,.8);
+  --bg:#E8E9EC; --panel:#F6F6F8; --fg:#18191C; --muted:#6A6C73; --line:#D4D6DB; --accent:#89341C;
+  --hot:rgba(228,87,46,.85);
   --ink:#1A1A1A; --sub:#6B6B6B; --mute:#9E9E9E; --pline:#D6D6D6; --pfill:#F2F2F2; --pfill2:#E0E0E0; --paper:#FFFFFF;
   --sans:"Inter",-apple-system,"Helvetica Neue",Arial,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#131416;--panel:#1B1C1F;--fg:#ECEDF0;--muted:#9B9DA4;--line:#2D2F34;--accent:#F0724A;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#131416;--panel:#1B1C1F;--fg:#ECEDF0;--muted:#9B9DA4;--line:#2D2F34;--accent:#F0724A;color-scheme:dark}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#131416;--panel:#1B1C1F;--fg:#ECEDF0;--muted:#9B9DA4;--line:#2D2F34;--accent:#E4572E;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#131416;--panel:#1B1C1F;--fg:#ECEDF0;--muted:#9B9DA4;--line:#2D2F34;--accent:#E4572E;color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
@@ -67,72 +67,85 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .step:hover{color:var(--fg);border-color:var(--muted)}
 .navopen-btn{display:none}
 
-/* ---------- phone (deliberately light: it is a wireframe) ---------- */
-.phone{position:absolute;top:0;left:0;width:375px;height:812px;transform-origin:top left;background:var(--paper);color:var(--ink);border-radius:44px;box-shadow:0 0 0 9px #0E0E10,0 28px 70px rgba(0,0,0,.28);overflow:hidden;display:flex;flex-direction:column;font-family:var(--sans);font-size:15px;line-height:1.35;color-scheme:light}
+/* ---------- phone: hi-fi, built from the Percimon design system (accent-colors, Inter Regular/Medium) ---------- */
+.phone{--primary:#89341C;--on-primary:#FFFFFF;--pc:#E7D6D2;--on-pc:#37150B;--surface:#FEF7F5;--lowest:#FFFFFF;--low:#F2F2F2;--cont:#E6E6E6;--ink:#1C1C1C;--sub:#494949;--outline:#A7A7A7;--ovar:#E7E7E7;--succ:#00BA56;--succ-c:#E6FDF0;--on-succ-c:#004620;--inv-s:#362E2B;--inv-p:#D0AEA4;
+ position:absolute;top:0;left:0;width:375px;height:812px;transform-origin:top left;background:var(--surface);color:var(--ink);border-radius:44px;box-shadow:0 0 0 9px #0E0E10,0 28px 70px rgba(54,20,10,.28);overflow:hidden;display:flex;flex-direction:column;font-family:var(--sans);font-size:16px;line-height:1.4;color-scheme:light}
 .phone p,.phone h2,.phone h3{margin:0}
-.sb{height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-size:15px;font-weight:600}
+.sb{height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-size:16px;font-weight:500}
 .sb i{width:26px;height:12px;border-radius:3px;background:var(--ink)}
 .topbar{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
-.topbar h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.01em}
-.topbar .t{font-size:17px;font-weight:600}
-.topbar .sp{width:24px}
+.topbar h1{margin:0;font-size:25px;font-weight:500;letter-spacing:-.01em}
+.topbar .t{font-size:16px;font-weight:500}
+.topbar .sp{width:40px}
+.circ{width:40px;height:40px;border-radius:50%;background:var(--lowest);box-shadow:inset 0 0 0 1px var(--ovar);display:grid;place-items:center;flex:none}
 .content{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:20px;padding:12px max(20px,env(safe-area-inset-right,0px)) 24px max(20px,env(safe-area-inset-left,0px));scrollbar-width:none}
 .content::-webkit-scrollbar{display:none}
 .content>*{flex-shrink:0}
 .content.tight{gap:14px}
 .content.center{justify-content:center;align-items:center;text-align:center;gap:16px}
-.footer{flex:none;display:flex;flex-direction:column;gap:8px;padding:12px 20px 34px;border-top:1px solid var(--pline);background:var(--paper)}
-.tabbar{height:84px;flex:none;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 12px 0;border-top:1px solid var(--pline);background:var(--paper)}
-.tab{width:62px;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:4px;font-size:11px;font-weight:500;color:var(--mute)}
-.tab.on{color:var(--ink);font-weight:600}
-.tab .askb{width:48px;height:48px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;margin-top:-4px}
+.content.bottom{justify-content:flex-end;gap:14px;padding-bottom:34px}
+.footer{flex:none;display:flex;flex-direction:column;gap:8px;padding:12px 20px 34px;border-top:1px solid var(--ovar);background:var(--lowest)}
+.tabbar{height:84px;flex:none;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 12px 0;border-top:1px solid var(--ovar);background:var(--lowest)}
+.tab{width:62px;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:4px;font-size:10px;color:var(--sub)}
+.tab svg{color:var(--outline)}
+.tab.on{color:var(--primary);font-weight:500}
+.tab.on svg{color:var(--primary)}
+.tab .askb{width:52px;height:52px;border-radius:50%;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;margin-top:-6px;box-shadow:0 6px 16px rgba(137,52,28,.32)}
 
-.btn{height:52px;width:100%;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex:none}
+.btn{height:48px;width:100%;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;flex:none;padding:0 16px}
 .hrow>.btn{flex:1}
-.sso{height:52px;width:100%;border-radius:10px;box-shadow:inset 0 0 0 1px var(--ink);display:flex;align-items:center;justify-content:center;gap:10px;font-size:16px;font-weight:600;flex:none}
-.sso .logo{width:20px;height:20px;border-radius:5px;background:var(--pfill2)}
+.btn.primary{background:var(--primary);color:var(--on-primary)}
+.btn.secondary{box-shadow:inset 0 0 0 1px var(--primary);color:var(--primary);background:var(--lowest)}
+.btn.ghost{color:var(--primary)}
+.btn.small{width:auto;flex:none;height:40px}
+.sso{height:48px;width:100%;border-radius:8px;background:var(--lowest);box-shadow:inset 0 0 0 1px var(--outline);display:flex;align-items:center;justify-content:center;gap:10px;font-size:16px;font-weight:500;flex:none;color:var(--ink)}
+.sso .logo{width:22px;height:22px;border-radius:6px;background:#000;color:#fff;display:grid;place-items:center;font-size:13px;font-style:normal;font-weight:500}
 .ssorow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .divider{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--sub)}
-.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--pline)}
-.linkline{font-size:13px;color:var(--sub);text-align:center;padding:6px 0}
-.linkline b{color:var(--ink);font-weight:600}
-.btn.primary{background:var(--ink);color:#fff}
-.btn.secondary{box-shadow:inset 0 0 0 1px var(--ink)}
-.iconbtn{width:52px;height:52px;flex:none;border-radius:10px;box-shadow:inset 0 0 0 1px var(--ink);display:grid;place-items:center}
-.field{display:flex;flex-direction:column;gap:6px;min-width:0}
-.field>span{font-size:13px;font-weight:500;color:var(--sub)}
-.field input,.field textarea{width:100%;height:48px;border:1px solid var(--pline);border-radius:8px;padding:0 14px;font:inherit;font-size:15px;color:var(--ink);background:var(--paper);outline:none;box-sizing:border-box}
-.field textarea{height:120px;padding:14px;resize:none}
-.field input:focus,.field textarea:focus{border-color:var(--ink)}
-.field ::placeholder{color:var(--mute)}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--ovar)}
+.linkline{font-size:13px;font-weight:500;color:var(--primary);text-align:center;padding:6px 0}
+.iconbtn{width:48px;height:48px;flex:none;border-radius:8px;box-shadow:inset 0 0 0 1px var(--primary);color:var(--primary);display:grid;place-items:center}
+.field{position:relative;display:block;min-width:0}
+.field input,.field textarea{width:100%;height:48px;border:1px solid var(--outline);border-radius:8px;padding:18px 12px 4px;font:inherit;font-size:16px;color:var(--ink);background:var(--lowest);outline:none;box-sizing:border-box}
+.field textarea{height:120px;padding:24px 12px 8px;resize:none;display:block}
+.field>span{position:absolute;left:13px;top:13px;font-size:16px;line-height:1.35;color:var(--sub);pointer-events:none;transition:top .15s,font-size .15s}
+.field :is(input,textarea):is(:focus,:not(:placeholder-shown)){border-color:var(--primary)}
+.field :is(input,textarea):is(:focus,:not(:placeholder-shown))+span{top:5px;font-size:10px}
 .rows{display:flex;flex-direction:column}
-.row{display:flex;align-items:center;gap:12px;height:56px;width:100%;border-bottom:1px solid var(--pline);text-align:left}
-.row .sq{width:20px;height:20px;border-radius:5px;background:var(--pfill2);flex:none}
-.row .l{flex:1;font-size:15px}
-.row .v{font-size:14px;color:var(--sub)}
-.row svg{color:var(--mute)}
+.row{display:flex;align-items:center;gap:12px;height:56px;width:100%;border-bottom:1px solid var(--ovar);text-align:left}
+.row .l{flex:1;font-size:16px}
+.row .v{font-size:13px;color:var(--sub)}
+.row svg{color:var(--outline)}
 .pills{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px}
 .pills::-webkit-scrollbar{display:none}
 .pills.wrap{flex-wrap:wrap;margin:0;padding:0;overflow:visible}
-.pill{height:34px;padding:0 14px;border-radius:100px;box-shadow:inset 0 0 0 1px var(--pline);background:var(--paper);font-size:13px;font-weight:500;flex:none;display:inline-flex;align-items:center;white-space:nowrap}
-.pill.on{background:var(--ink);color:#fff;box-shadow:none}
-.spill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:100px;background:var(--pfill2);font-size:12px;font-weight:500;flex:none;white-space:nowrap}
-.spill.act{background:var(--ink);color:#fff}
-.ph{background:var(--pfill2);border-radius:10px;display:grid;place-items:center;color:var(--mute);flex:none;width:100%}
+.pill{height:32px;padding:0 10px;border-radius:8px;box-shadow:inset 0 0 0 1px var(--primary);color:var(--primary);background:var(--lowest);font-size:15px;flex:none;display:inline-flex;align-items:center;white-space:nowrap}
+.pill.on{background:var(--pc);color:var(--on-pc)}
+.seg{display:flex;gap:4px;padding:4px;border-radius:8px;background:var(--cont)}
+.seg button{flex:1;height:34px;border-radius:4px;font-size:13px;font-weight:500;color:var(--sub);text-align:center}
+.seg button.on{background:var(--lowest);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.spill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:var(--low);color:var(--sub);font-size:10px;font-weight:500;flex:none;white-space:nowrap}
+.spill.act{background:var(--pc);color:var(--on-pc)}
+.spill.dark{background:var(--primary);color:var(--on-primary)}
+.spill.ok{background:var(--succ-c);color:var(--on-succ-c)}
+.pic{background:var(--cont) center/cover no-repeat;border-radius:12px;flex:none;width:100%}
 .shead{display:flex;justify-content:space-between;align-items:center}
-.shead h3{font-size:18px;font-weight:600}
-.shead .a{font-size:13px;font-weight:500;color:var(--sub)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 14px}
-.card{display:flex;flex-direction:column;gap:4px;text-align:left;cursor:pointer;min-width:0}
-.card .ph{height:180px;margin-bottom:4px}
-.card .b{font-size:12px;color:var(--sub)}
-.card .n{font-size:14px;font-weight:500}
-.card .p{font-size:14px;font-weight:600}
-.hscroll{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px}
+.shead h3{font-size:20px;font-weight:500}
+.shead .a{font-size:13px;font-weight:500;color:var(--primary)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 15px}
+.card{display:flex;flex-direction:column;gap:2px;text-align:left;cursor:pointer;min-width:0}
+.card .pic{height:190px;margin-bottom:8px;position:relative}
+.card .heart{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:var(--lowest);color:var(--primary);display:grid;place-items:center}
+.card .b{font-size:13px;color:var(--sub)}
+.card .n{font-size:16px;font-weight:500}
+.card .p{font-size:13px;font-weight:500;color:var(--primary)}
+.hscroll{display:flex;gap:15px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px}
 .hscroll::-webkit-scrollbar{display:none}
 .hscroll .card{width:160px;flex:none}
-.box{background:var(--pfill);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
-.box.line{background:var(--paper);box-shadow:inset 0 0 0 1px var(--pline)}
+.box{background:var(--lowest);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;box-shadow:inset 0 0 0 1px var(--ovar)}
+.box.tonal{background:var(--pc);color:var(--on-pc);box-shadow:none}
+.box.soft{background:var(--low);box-shadow:none}
+.box.rq{flex-direction:row;align-items:flex-start;gap:12px;padding:12px;cursor:pointer}
 .hrow{display:flex;align-items:center;gap:12px}
 .box.hrow{flex-direction:row}
 .between{justify-content:space-between}
@@ -141,62 +154,81 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .stack{display:flex;flex-direction:column;gap:6px}
 .stack.g2{gap:2px}
 .label{font-size:13px;font-weight:500;color:var(--sub);margin-bottom:-6px}
-.k{font-size:13px;font-weight:600;letter-spacing:.2em;color:var(--sub)}
-.h1{font-size:32px;font-weight:700;line-height:1.15;letter-spacing:-.02em;text-wrap:balance}
-.h2{font-size:24px;font-weight:700;line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
-.sub{color:var(--sub)}.mute{color:var(--mute)}
-.s12{font-size:12px}.s13{font-size:13px}.s14{font-size:14px}.s15{font-size:15px}.s16{font-size:16px}.s17{font-size:17px}.s20{font-size:20px}.s22{font-size:22px}.s28{font-size:28px}
-.b500{font-weight:500}.b600{font-weight:600}.b700{font-weight:700}
+.k{font-size:13px;font-weight:500;letter-spacing:.24em;color:var(--sub)}
+.h1{font-size:39px;font-weight:500;line-height:1.1;letter-spacing:-.02em;text-wrap:balance}
+.h2{font-size:25px;font-weight:500;line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--sub)}.mute{color:var(--outline)}.pri{color:var(--primary)}
+.onimg{color:#fff}
+.s10{font-size:10px}.s12{font-size:12px}.s13{font-size:13px}.s14{font-size:14px}.s15{font-size:15px}.s16{font-size:16px}.s17{font-size:17px}.s20{font-size:20px}.s22{font-size:22px}.s25{font-size:25px}.s28{font-size:28px}.s31{font-size:31px}
+.b500,.b600,.b700{font-weight:500}
 .num{font-variant-numeric:tabular-nums}
-.fine{font-size:12px;color:var(--mute);text-align:center}
-.search{display:flex;align-items:center;gap:10px;height:48px;padding:0 14px;border-radius:10px;background:var(--pfill);color:var(--mute);width:100%;text-align:left;box-sizing:border-box}
-.search span{flex:1;font-size:15px}
-.search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:15px;color:var(--ink);outline:none}
-.search svg:last-child{color:var(--ink)}
-.tile{display:flex;flex-direction:column;gap:8px;cursor:pointer}
+.fine{font-size:10px;color:var(--sub);text-align:center}
+.search{display:flex;align-items:center;gap:10px;height:44px;padding:0 12px;border-radius:8px;background:var(--low);box-shadow:inset 0 0 0 1px var(--outline);color:var(--sub);width:100%;text-align:left;box-sizing:border-box}
+.search span{flex:1;font-size:16px}
+.search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:16px;color:var(--ink);outline:none}
+.search input::placeholder{color:var(--sub)}
+.hero{position:relative;height:196px;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;padding:16px;color:#fff;background:center/cover no-repeat;cursor:pointer}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(23,8,3,.82) 100%)}
+.hero>*{position:relative}
+.hero .k{color:#fff;font-size:10px;letter-spacing:.16em}
 .cats{display:flex;justify-content:space-between}
-.cat{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500}
-.cat .ph{width:68px;height:68px;border-radius:34px}
-.dots{display:flex;gap:6px;justify-content:center;margin-top:-8px}
-.dots i{width:6px;height:6px;border-radius:50%;background:var(--pfill2)}
-.dots i.on{background:var(--ink)}
-.badge{width:88px;height:88px;border-radius:50%;background:var(--pfill2);display:grid;place-items:center}
+.cat{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;font-weight:500}
+.cat .pic{width:64px;height:64px;border-radius:32px}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:-4px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--pc)}
+.dots i.on{background:var(--primary)}
+.badge{width:88px;height:88px;border-radius:50%;background:var(--pc);color:var(--primary);display:grid;place-items:center}
+.badge.ok{background:var(--succ-c);color:var(--succ)}
 .prog{display:flex;gap:6px}
-.prog i{flex:1;height:4px;border-radius:2px;background:var(--pfill2)}
-.prog i.on{background:var(--ink)}
-.otp{display:flex;gap:10px}
-.otp input{width:100%;min-width:0;height:56px;border:1px solid var(--pline);border-radius:10px;text-align:center;font:inherit;font-size:22px;font-weight:600;color:var(--ink);outline:none;background:var(--paper)}
-.otp input:focus{border-color:var(--ink);box-shadow:inset 0 0 0 .5px var(--ink)}
+.prog i{flex:1;height:4px;border-radius:2px;background:var(--pc)}
+.prog i.on{background:var(--primary)}
+.otp{display:flex;gap:8px;justify-content:center}
+.otp input{width:48px;min-width:0;height:48px;border:1px solid var(--outline);border-radius:8px;text-align:center;font:inherit;font-size:16px;color:var(--ink);outline:none;background:var(--low)}
+.otp input:focus,.otp input:not(:placeholder-shown){border-color:var(--primary);background:var(--lowest)}
 .tl{display:flex;flex-direction:column}
-.tl>div{height:34px;display:flex;align-items:center;gap:12px}
-.tl .d{width:12px;height:12px;border-radius:50%;background:var(--pfill2);box-sizing:border-box;flex:none}
-.tl .d.done{background:var(--ink)}
-.tl .d.now{background:var(--paper);border:3px solid var(--ink)}
+.tl>div{height:32px;display:flex;align-items:center;gap:12px}
+.tl .d{width:12px;height:12px;border-radius:50%;background:var(--pc);box-sizing:border-box;flex:none}
+.tl .d.done{background:var(--primary)}
+.tl .d.now{background:var(--lowest);border:3px solid var(--primary)}
 .tl .x{flex:1}
-.tl .todo .x{color:var(--mute)}
-.tl .now .x{font-weight:600}
+.tl .todo .x{color:var(--outline)}
+.tl .now .x{font-weight:500}
 .checks{display:flex;flex-direction:column;gap:10px}
+.checks svg{color:var(--primary)}
+.meta{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub)}
 .attach{display:flex;gap:10px}
-.addph{width:64px;height:64px;border-radius:10px;border:1px dashed #BFBFBF;display:grid;place-items:center;color:var(--sub);flex:none}
-.thread{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--pline);cursor:pointer;text-align:left;width:100%}
-.thread .ph{width:48px;height:48px}
-.thread .ph.round{border-radius:24px}
+.addph{width:64px;height:64px;border-radius:12px;border:1px dashed var(--primary);display:grid;place-items:center;color:var(--primary);flex:none}
+.thread{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--ovar);cursor:pointer;text-align:left;width:100%}
+.thread .pic{width:52px;height:52px}
+.thread .pic.round{border-radius:26px}
 .thread .m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .thread .m p:last-child{font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.unread{width:8px;height:8px;border-radius:50%;background:var(--ink);flex:none}
-.bub{max-width:250px;padding:10px 14px;border-radius:16px;font-size:15px;background:var(--pfill);align-self:flex-start;overflow-wrap:anywhere}
-.bub.me{background:var(--ink);color:#fff;align-self:flex-end}
-.qcard{width:250px;align-self:flex-start;border-radius:16px;box-shadow:inset 0 0 0 1px var(--pline);padding:14px;display:flex;flex-direction:column;gap:6px;box-sizing:border-box}
-.qcard .btn{height:44px;flex:none}
+.unread{width:8px;height:8px;border-radius:50%;background:var(--primary);flex:none}
+.bub{max-width:250px;padding:10px 14px;border-radius:16px;font-size:16px;background:var(--lowest);box-shadow:inset 0 0 0 1px var(--ovar);align-self:flex-start;overflow-wrap:anywhere}
+.bub.me{background:var(--primary);color:var(--on-primary);box-shadow:none;align-self:flex-end}
+.qcard{width:250px;align-self:flex-start;border-radius:16px;background:var(--lowest);box-shadow:inset 0 0 0 1px var(--ovar);padding:12px;display:flex;flex-direction:column;gap:4px;box-sizing:border-box}
+.qcard .pic{height:110px;margin-bottom:6px}
+.qcard .btn{margin-top:6px}
 .composer{display:flex;align-items:center;gap:10px}
-.composer input{flex:1;min-width:0;height:44px;border-radius:22px;border:1px solid var(--pline);padding:0 16px;font:inherit;font-size:15px;outline:none;color:var(--ink);background:var(--paper)}
-.composer input:focus{border-color:var(--ink)}
-.sendb{width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;flex:none}
-.member{background:var(--ink);color:#fff;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px}
-.member .k{color:#BFBFBF;font-size:12px}
+.composer>button:first-child{color:var(--sub)}
+.composer input{flex:1;min-width:0;height:44px;border-radius:22px;border:1px solid var(--outline);padding:0 16px;font:inherit;font-size:16px;outline:none;color:var(--ink);background:var(--lowest)}
+.composer input:focus{border-color:var(--primary)}
+.sendb{width:44px;height:44px;border-radius:50%;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;flex:none}
+.member{color:#fff;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:4px;background:linear-gradient(rgba(137,52,28,.78),rgba(137,52,28,.78)),url('img/yacht.jpg') center/cover no-repeat}
+.member .k{color:var(--inv-p);font-size:10px}
+.member .x{color:var(--inv-p);font-size:13px}
+.avatar{width:52px;height:52px;border-radius:50%;background:var(--pc);color:var(--on-pc);display:grid;place-items:center;font-size:16px;font-weight:500;flex:none}
 .empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:48px 12px}
-.toast{position:absolute;left:20px;right:20px;bottom:104px;background:var(--ink);color:#fff;border-radius:12px;padding:12px 14px;font-size:14px;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:5}
+.toast{position:absolute;left:20px;right:20px;bottom:104px;background:var(--inv-s);color:#fff;border-radius:8px;padding:12px 14px;font-size:13px;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:5}
 .toast.show{opacity:1;transform:none}
+.bgimg{position:absolute;inset:0;background:center/cover no-repeat;z-index:0}
+.bgimg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.04) 38%,rgba(23,8,3,.93) 100%)}
+.phone>:not(.bgimg):not(.toast){position:relative;z-index:1}
+.phone.on-image .sb{color:#fff}
+.phone.on-image .sb i{background:#fff}
+.phone.on-image .divider{color:#fff}
+.phone.on-image .divider::before,.phone.on-image .divider::after{background:rgba(255,255,255,.35)}
+.phone.on-image .btn.ghost{color:#fff}
 
 /* hotspots */
 :is(body.hot .phone,.phone.flash) :is([data-go],[data-act],[data-back],[data-toast],[data-tab]){outline:2px solid var(--hot);outline-offset:-1px}
@@ -226,7 +258,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     <div class="nav-head">
       <div class="brand"><span class="fruit"></span>Percimon</div>
       <button class="close" id="navClose" aria-label="Close screen list"></button>
-      <p id="navMeta">Lo-fi prototype · v0.3 · 23 screens</p>
+      <p id="navMeta">Hi-fi prototype · v1.0 · 24 screens</p>
     </div>
     <div class="ctrls">
       <label class="switch" for="hotToggle"><input type="checkbox" id="hotToggle"> Show hotspots</label>
@@ -265,7 +297,9 @@ const P={
  paperclip:'<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
  layers:'<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
  rotate:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
- x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
+ x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+ pin:'<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+ clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'
 };
 const ic=(n,s=24,fill='none')=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="${fill}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
@@ -291,190 +325,200 @@ function reset(){S={auth:'signup',signinBy:'Email',f:{otp0:'4',otp1:'8',q:'Patek
 reset();
 
 /* ---------- building blocks ---------- */
-const topBar=(t,root)=>root?`<div class="topbar"><h1>${t}</h1><button data-toast="Notifications aren't in the lo-fi yet." aria-label="Notifications">${ic('bell')}</button></div>`
- :`<div class="topbar"><button data-back aria-label="Back">${ic('chevL')}</button><span class="t">${t}</span><span class="sp"></span></div>`;
+const NOT=w=>`data-toast="${w} isn't in this prototype yet."`;
+const topBar=(t,root)=>root?`<div class="topbar"><h1>${t}</h1><button class="circ" ${NOT('Notifications')} aria-label="Notifications">${ic('bell',20)}</button></div>`
+ :`<div class="topbar"><button class="circ" data-back aria-label="Back">${ic('chevL',20)}</button><span class="t">${t}</span><span class="sp"></span></div>`;
 const btn=(l,type='primary',a='')=>`<button class="btn ${type}" ${a}>${l}</button>`;
-const ph=(h,r=10,style='')=>`<div class="ph" style="height:${h}px;border-radius:${r}px;${style}">${ic('image',24)}</div>`;
+const pic=(k,h,r=12,extra='')=>`<div class="pic" aria-hidden="true" style="height:${h}px;border-radius:${r}px;background-image:url('img/${k}.jpg');${extra}"></div>`;
 const pill=(l,on,a='',tag='button')=>`<${tag} class="pill ${on?'on':''}" ${a}>${l}</${tag}>`;
-const spill=(l,act)=>`<span class="spill ${act?'act':''}">${l}</span>`;
+const seg=(items,cur,act)=>`<div class="seg">${items.map(x=>{const [l,v]=Array.isArray(x)?x:[x,x];return`<button class="${cur===v?'on':''}" data-act="${act}" data-arg="${v}">${l}</button>`}).join('')}</div>`;
+const spill=(l,tone='')=>`<span class="spill ${tone}">${l}</span>`;
 const shead=(t,a='',attrs='')=>`<div class="shead"><h3>${t}</h3>${a?`<button class="a" ${attrs}>${a}</button>`:''}</div>`;
-const row=(l,v='',a='')=>a?`<button class="row" ${a}><i class="sq"></i><span class="l">${l}</span><span class="v">${v}</span>${ic('chevR',18)}</button>`
- :`<div class="row"><i class="sq"></i><span class="l">${l}</span><span class="v">${v}</span></div>`;
-const card=(n,b,p,a='')=>`<div class="card" ${TAP} ${a}>${ph(180)}<span class="b">${b}</span><span class="n">${n}</span><span class="p">${p}</span></div>`;
-const field=(id,l,ph_,type='text',multi=false)=>`<label class="field" for="${id}"><span>${l}</span>${multi
- ?`<textarea id="${id}" placeholder="${esc(ph_)}">${esc(S.f[id])}</textarea>`
- :`<input id="${id}" type="${type}" placeholder="${esc(ph_)}" value="${esc(S.f[id])}" autocomplete="off">`}</label>`;
-const kv=(k,v,bold)=>`<div class="hrow between"><span class="s14 ${bold?'b600':'sub'}">${k}</span><span class="s14 num ${bold?'b700':'b500'}">${v}</span></div>`;
+const row=(l,v='',a='')=>a?`<button class="row" ${a}><span class="l">${l}</span><span class="v">${v}</span>${ic('chevR',18)}</button>`
+ :`<div class="row"><span class="l">${l}</span><span class="v">${v}</span></div>`;
+const card=(n,b,p,k,a='')=>`<div class="card" ${TAP} ${a}><div class="pic" aria-hidden="true" style="background-image:url('img/${k}.jpg')"><span class="heart">${ic('heart',16)}</span></div><span class="b">${b}</span><span class="n">${n}</span><span class="p">${p}</span></div>`;
+const field=(id,l,ph_,type='text',multi=false)=>`<label class="field" for="${id}">${multi
+ ?`<textarea id="${id}" placeholder=" ">${esc(S.f[id])}</textarea>`
+ :`<input id="${id}" type="${type}" placeholder=" " value="${esc(S.f[id])}" autocomplete="off">`}<span>${l}</span></label>`;
+const kv=(k,v,bold)=>`<div class="hrow between"><span class="${bold?'s16 b500':'s13 sub'}">${k}</span><span class="num ${bold?'s16 b500':'s13 b500'}">${v}</span></div>`;
 const tabs=a=>`<nav class="tabbar">${[['home','Discover','compass'],['requests','Requests','clip'],['ask','Ask','plus'],['inbox','Chat','msg'],['profile','Profile','user']].map(([id,l,i])=>
  id==='ask'?`<button class="tab" data-go="ask" aria-label="New request"><span class="askb">${ic('plus')}</span></button>`
  :`<button class="tab ${a===id?'on':''}" data-tab="${id}">${ic(i)}<span>${l}</span></button>`).join('')}</nav>`;
-const sso=(l,a='')=>`<button class="sso" ${a}><i class="logo"></i>${l}</button>`;
+const sso=(l,init,a='')=>`<button class="sso" ${a}><i class="logo" aria-hidden="true">${init}</i>${l}</button>`;
 const mask=e=>{e=(e||'').trim();if(!e.includes('@'))return 'n•••@email.com';const [u,d]=e.split('@');return u.slice(0,1)+'•••@'+d};
-const NOT=w=>`data-toast="${w} isn't in the lo-fi yet."`;
 const eur=n=>'€ '+n.toLocaleString('en-US');
+const ONLY='data-toast="Only the Patek request is fully wired in this prototype."';
 
 /* ---------- screens ---------- */
 const R={
-welcome:()=>({body:`${ph(280,20)}<p class="k">PERCIMON</p><h2 class="h1">Everything, arranged.</h2><p class="s16 sub">A private concierge for luxury goods, travel and experiences.</p>`,
- footer:btn('Create account','primary','data-act="auth" data-arg="signup" data-go="signup"')+`<div class="divider">or continue with</div><div class="ssorow">${sso('Apple','data-act="auth" data-arg="signup" data-toast="Signed up with Apple." data-go="taste"')}${sso('Google','data-act="auth" data-arg="signup" data-toast="Signed up with Google." data-go="taste"')}</div>`+btn('I already have an account','ghost','data-go="signin"')}),
+welcome:()=>({bg:'villa',bottom:true,
+ body:`<p class="k onimg">PERCIMON</p><h2 class="h1 onimg">Everything, arranged.</h2><p class="s16 onimg">A private concierge for luxury goods, travel and experiences.</p><div style="height:6px"></div>
+ ${btn('Create account','primary','data-act="auth" data-arg="signup" data-go="signup"')}<div class="divider">or continue with</div>
+ <div class="ssorow">${sso('Apple','A','data-act="auth" data-arg="signup" data-toast="Signed up with Apple." data-go="taste"')}${sso('Google','G','data-act="auth" data-arg="signup" data-toast="Signed up with Google." data-go="taste"')}</div>
+ ${btn('I already have an account','ghost','data-go="signin"')}`}),
 
-signup:()=>({top:topBar('Create account'),gap:16,
- body:`<div class="stack"><h2 class="h2">Create your account</h2><p class="s14 sub">Your concierge is one message away.</p></div>
- ${sso('Continue with Apple','data-act="auth" data-arg="signup" data-toast="Signed up with Apple." data-go="taste"')}${sso('Continue with Google','data-act="auth" data-arg="signup" data-toast="Signed up with Google." data-go="taste"')}
+signup:()=>({top:topBar('Create account'),tight:true,
+ body:`<div class="stack"><h2 class="h2">Create your account</h2><p class="s16 sub">Your concierge is one message away.</p></div>
+ ${sso('Continue with Apple','A','data-act="auth" data-arg="signup" data-toast="Signed up with Apple." data-go="taste"')}${sso('Continue with Google','G','data-act="auth" data-arg="signup" data-toast="Signed up with Google." data-go="taste"')}
  <div class="divider">or sign up with email</div>
- ${field('su-name','Full name','First and last name')}${field('su-email','Email','name@email.com','email')}${field('su-invite','Invite code (optional)','e.g. PCM-4821')}`,
- footer:btn('Create account','primary','data-act="auth" data-arg="signup" data-go="verify"')+`<p class="fine">By continuing you accept the Terms and Privacy Policy.</p><button class="linkline" data-go="signin">Already a member? <b>Sign in</b></button>`}),
+ ${field('su-name','Full name')}${field('su-email','Email','','email')}${field('su-invite','Invite code (optional)')}`,
+ footer:btn('Create account','primary','data-act="auth" data-arg="signup" data-go="verify"')+`<p class="fine">By continuing you accept the Terms and Privacy Policy.</p><button class="linkline" data-go="signin">Already a member? Sign in</button>`}),
 
-signin:()=>{const ph_=S.signinBy==='Phone';return{top:topBar('Sign in'),gap:16,
- body:`<div class="stack"><h2 class="h2">Welcome back</h2><p class="s14 sub">Sign in the way you joined.</p></div>
- ${sso('Continue with Apple','data-toast="Signed in with Apple." data-tab="home"')}${sso('Continue with Google','data-toast="Signed in with Google." data-tab="home"')}
+signin:()=>{const p=S.signinBy==='Phone';return{top:topBar('Sign in'),tight:true,
+ body:`<div class="stack"><h2 class="h2">Welcome back</h2><p class="s16 sub">Sign in the way you joined.</p></div>
+ ${sso('Continue with Apple','A','data-toast="Signed in with Apple." data-tab="home"')}${sso('Continue with Google','G','data-toast="Signed in with Google." data-tab="home"')}
  <div class="divider">or with a one-time code</div>
- <div class="pills">${pill('Email',!ph_,'data-act="signinBy" data-arg="Email"')}${pill('Phone',ph_,'data-act="signinBy" data-arg="Phone"')}</div>
- ${ph_?field('si-phone','Phone','+49','tel'):field('si-email','Email','name@email.com','email')}`,
- footer:btn('Send code','primary','data-act="auth" data-arg="signin" data-go="verify"')+`<button class="linkline" data-go="signup">New to Percimon? <b>Create an account</b></button>`}},
+ ${seg(['Email','Phone'],S.signinBy,'signinBy')}
+ ${p?field('si-phone','Phone','','tel'):field('si-email','Email','','email')}`,
+ footer:btn('Send code','primary','data-act="auth" data-arg="signin" data-go="verify"')+`<button class="linkline" data-go="signup">New to Percimon? Create an account</button>`}},
 
 verify:()=>{const signin=S.auth==='signin';const to=signin&&S.signinBy==='Phone'?'+49 ••• ••• 21':mask(S.f[signin?'si-email':'su-email']);return{top:topBar('Verify'),
- body:`<div class="stack"><h2 class="h2">Enter the code</h2><p class="s15 sub">We sent a 6-digit code to ${esc(to)}</p></div>
- <div class="otp">${[0,1,2,3,4,5].map(i=>`<input id="otp${i}" inputmode="numeric" maxlength="1" aria-label="Digit ${i+1}" value="${esc(S.f['otp'+i])}">`).join('')}</div>
- <button class="s14 b500 sub" style="align-self:flex-start" data-toast="New code sent to ${esc(to)}.">Resend code in 0:30</button>`,
+ body:`<div class="stack"><h2 class="h2">Enter the code</h2><p class="s16 sub">We sent a 6-digit code to ${esc(to)}</p></div>
+ <div class="otp">${[0,1,2,3,4,5].map(i=>`<input id="otp${i}" inputmode="numeric" maxlength="1" placeholder=" " aria-label="Digit ${i+1}" value="${esc(S.f['otp'+i])}">`).join('')}</div>
+ <p class="s16 sub" style="text-align:center">0:30</p>
+ <button class="s16 b500 pri" style="align-self:center" data-toast="New code sent to ${esc(to)}.">Resend code</button>`,
  footer:signin?btn('Verify','primary','data-toast="Welcome back." data-tab="home"'):btn('Verify','primary','data-go="taste"')}},
 
 taste:()=>({top:topBar('Your taste'),tight:true,
- body:`<div class="prog"><i class="on"></i><i class="on"></i><i></i></div><p class="s13 b500 sub">Step 2 of 3</p>
- <div class="stack"><h2 class="h2">What are you into?</h2><p class="s15 sub">Pick a few. Your concierge will tailor suggestions.</p></div>
+ body:`<div class="prog"><i class="on"></i><i class="on"></i><i></i></div><p class="s13 b500 pri">Step 2 of 3</p>
+ <div class="stack"><h2 class="h2">What are you into?</h2><p class="s16 sub">Pick a few. Your concierge will tailor suggestions.</p></div>
  <div class="pills wrap">${['Watches','Jewelry','Fashion','Art','Cars','Private jets','Yachts','Villas','Fine dining','Events','Wellness','Chauffeur'].map(t=>pill(t,S.taste.has(t),`data-act="taste" data-arg="${t}"`)).join('')}</div>
- ${shead('Sizes')}<div class="rows">${row('Clothing','Select',NOT('The size picker'))}${row('Shoes','Select',NOT('The size picker'))}${row('Ring','Select',NOT('The size picker'))}</div>`,
+ ${shead('Sizes')}<div class="rows">${row('Clothing','M / 48',NOT('The size picker'))}${row('Shoes','EU 42',NOT('The size picker'))}${row('Ring','54',NOT('The size picker'))}</div>`,
  footer:btn('Continue','primary','data-go="ready"')+btn('Skip for now','ghost','data-go="ready"')}),
 
 ready:()=>({center:true,
- body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Welcome to Percimon</h2><p class="s15 sub">Your concierge, Elena, is ready whenever you are.</p>${spill('Member',true)}`,
- footer:btn('Start exploring','primary','data-tab="home"')+btn('Meet your concierge','secondary','data-go="conversation"')}),
+ body:`${pic('concierge',104,52,'width:104px')}<h2 class="h2">Welcome to Percimon</h2><p class="s16 sub">Elena is your personal concierge. Message her for anything, any time.</p>${spill('Gold member','dark')}`,
+ footer:btn('Start exploring','primary','data-tab="home"')+btn('Meet Elena','secondary','data-go="conversation"')}),
 
 home:()=>({top:topBar('Percimon',true),tab:'home',gap:18,
- body:`<div class="hrow between"><div class="stack g2"><p class="s13 sub">Good evening</p><p class="s22 b600">Welcome back</p></div>${spill('Gold member',true)}</div>
- <button class="search" data-go="search">${ic('search',20)}<span>Search watches, villas, chefs…</span>${ic('sliders',20)}</button>
- <div class="tile" ${TAP} data-go="service">${ph(180,16)}<p class="s17 b600">Curated · Winter in Gstaad</p><p class="s13 sub">Chalets, private ski guides and après dining</p></div>
+ body:`<div class="hrow between"><div class="stack g2"><p class="s13 sub">Good evening</p><p class="s20 b500">Welcome back, Nadia</p></div>${spill('Gold member','dark')}</div>
+ <button class="search" data-go="search">${ic('search',20)}<span>Search watches, villas, chefs…</span></button>
+ <div class="hero" ${TAP} data-go="service" style="background-image:url('img/chalet.jpg')"><p class="k">CURATED</p><p class="s25 b500">Winter in Gstaad</p><p class="s13">Chalets, private ski guides and après dining</p></div>
  ${shead('Categories','All','data-go="watches"')}
- <div class="cats">${[['Watches','watches'],['Travel',''],['Dining','service'],['Cars','']].map(([n,g])=>`<button class="cat" ${g?`data-go="${g}"`:`data-toast="${n} isn't wired yet. Try Watches or Dining."`}><span class="ph">${ic('image',24)}</span>${n}</button>`).join('')}</div>
- <div class="box hrow" ${TAP} data-go="ask"><div class="grow stack g2"><p class="s15 b600">Can't find it?</p><p class="s13 sub">Ask your concierge for anything.</p></div>${pill('Ask',true,'','span')}</div>
- ${shead('Exclusive drops')}
- <div class="hscroll">${card('Royal Oak 15500','Audemars Piguet','€ 48,000','data-go="product"')}${card('Monaco GP Paddock','Experience','From € 9,500','data-go="event"')}${card('Birkin 30','Hermès','Price on request','data-go="product"')}</div>`}),
+ <div class="cats">${[['Watches','watches','watch-steel'],['Travel','','chalet'],['Dining','service','chef'],['Cars','','car']].map(([n,g,k])=>`<button class="cat" ${g?`data-go="${g}"`:`data-toast="${n} isn't wired yet. Try Watches or Dining."`}>${pic(k,64,32,'width:64px')}${n}</button>`).join('')}</div>
+ <div class="box tonal hrow" ${TAP} data-go="ask"><div class="grow stack g2"><p class="s16 b500">Can't find it?</p><p class="s13">Ask your concierge for anything.</p></div>${btn('Ask','primary small','tabindex="-1"')}</div>
+ ${shead('Exclusive drops','See all','data-go="watches"')}
+ <div class="hscroll">${card('Royal Oak 15500','Audemars Piguet','€ 48,000','watch-gold','data-go="product"')}${card('Monaco Yacht Show','Experience','From € 9,500','yacht','data-go="event"')}${card('Kelly 25','Hermès','Price on request','handbag','data-go="product"')}</div>`}),
 
-search:()=>{const q=S.f.q||'';return{top:topBar('Search'),tab:'home',
- body:`<label class="search" for="q">${ic('search',20)}<input id="q" value="${esc(q)}" placeholder="Search watches, villas, chefs…" autocomplete="off">${ic('sliders',20)}</label>
- ${S.recentCleared?'':`${shead('Recent','Clear','data-act="clearRecent"')}<div class="rows">${row('Patek Philippe Nautilus','','data-go="product"')}${row('Private chef, Mykonos','','data-go="service"')}${row('Monaco GP paddock','','data-go="event"')}</div>`}
- ${shead('Popular now')}<div class="pills wrap">${['Hermès Birkin','Yacht charter','Michelin dining','Rolex Daytona','Private jet','Ski chalet'].map(t=>pill(t,false,`data-act="setq" data-arg="${t}"`)).join('')}</div>
+search:()=>{const q=S.f.q||'';return{top:topBar('Search'),tab:'home',gap:18,
+ body:`<label class="search" for="q">${ic('search',20)}<input id="q" value="${esc(q)}" placeholder="Search watches, villas, chefs…" autocomplete="off"></label>
+ ${S.recentCleared?'':`${shead('Recent','Clear','data-act="clearRecent"')}<div class="rows">${row('Patek Philippe Nautilus','','data-go="product"')}${row('Private chef, Mykonos','','data-go="service"')}${row('Monaco Yacht Show','','data-go="event"')}</div>`}
+ ${shead('Popular now')}<div class="pills wrap">${['Hermès Kelly','Yacht charter','Michelin dining','Private jet','Ski chalet'].map(t=>pill(t,false,`data-act="setq" data-arg="${t}"`)).join('')}</div>
  <div class="shead"><h3 id="rq">Results for "${esc(q)}"</h3><button class="a" ${NOT('Filters')}>Filters</button></div>
- <div class="grid">${card('Nautilus 5711/1A','Patek Philippe','Price on request','data-go="product"')}${card('Aquanaut 5167A','Patek Philippe','€ 52,000','data-go="product"')}</div>`}},
+ <div class="grid">${card('Nautilus 5711/1A','Patek Philippe','Price on request','watch-steel','data-go="product"')}${card('Aquanaut 5167A','Patek Philippe','€ 52,000','watch-diver','data-go="product"')}</div>`}},
 
-watches:()=>{const W=[['Nautilus 5711/1A','Patek Philippe','Price on request'],['Daytona 116500LN','Rolex','€ 38,500'],['Royal Oak 15500','Audemars Piguet','€ 48,000'],['RM 035','Richard Mille','Price on request'],['Aquanaut 5167A','Patek Philippe','€ 52,000'],['Submariner 124060','Rolex','€ 11,900']];
+watches:()=>{const W=[['Nautilus 5711/1A','Patek Philippe','Price on request','watch-steel'],['Daytona 116508','Rolex','€ 38,500','watch-gold'],['Submariner 124060','Rolex','€ 11,900','watch-diver'],['Royal Oak 15500','Audemars Piguet','€ 48,000','watch-gold'],['Aquanaut 5167A','Patek Philippe','€ 52,000','watch-diver'],['Code 11.59','Audemars Piguet','€ 41,000','watch-steel']];
  const list=S.brand==='All'?W:W.filter(w=>w[1]===S.brand);
  return{top:topBar('Watches'),tab:'home',tight:true,
  body:`<div class="pills">${pill('Filters',false,NOT('The filter sheet'))}${pill('Sort: Featured',false,NOT('Sorting'))}${pill('In stock',false,NOT('Stock filtering'))}</div>
- <div class="pills">${['All','Patek Philippe','Rolex','Audemars Piguet','Richard Mille'].map(b=>pill(b,S.brand===b,`data-act="brand" data-arg="${b}"`)).join('')}</div>
+ <div class="pills">${['All','Patek Philippe','Rolex','Audemars Piguet'].map(b=>pill(b,S.brand===b,`data-act="brand" data-arg="${b}"`)).join('')}</div>
  <p class="s13 sub num">${S.brand==='All'?'Showing 6 of 128 pieces':`${list.length} ${S.brand} piece${list.length>1?'s':''}`}</p>
  <div class="grid">${list.map(w=>card(...w,'data-go="product"')).join('')}</div>`}},
 
 product:()=>({top:topBar('Details'),gap:12,
- body:`${ph(280,16)}<div class="dots"><i class="on"></i><i></i><i></i></div>
- <p class="s13 sub">Patek Philippe</p><h2 class="h2">Nautilus 5711/1A</h2><p class="s17 b600">Price on request</p>
- ${shead('Details')}<div class="rows">${row('Condition','Unworn')}${row('Year','2021')}${row('Box & papers','Included')}${row('Delivery','5–7 days')}</div>`,
+ body:`${pic('watch-steel',300,20)}<div class="dots"><i class="on"></i><i></i><i></i></div>
+ <p class="s13 b500 pri">Patek Philippe</p><h2 class="h2">Nautilus 5711/1A</h2><p class="s20 sub">Price on request</p>
+ <div class="hrow" style="gap:8px">${spill('Unworn','act')}${spill('2021')}${spill('Full set')}</div>
+ ${shead('Details')}<div class="rows">${row('Condition','Unworn')}${row('Year','2021')}${row('Box & papers','Included')}${row('Delivery','5–7 days, insured')}</div>`,
  footer:`<div class="hrow"><button class="iconbtn" data-act="save" aria-label="Save to wishlist" aria-pressed="${S.saved}">${ic('heart',22,S.saved?'currentColor':'none')}</button>${btn('Request this','primary','data-act="submit" data-arg="Patek Nautilus 5711/1A" data-go="sent"')}</div>`}),
 
 service:()=>({top:topBar('Service'),gap:12,
- body:`${ph(200,16)}<p class="s13 sub">Dining · Private chef</p><h2 class="h2">Private chef at your villa</h2><p class="s14 sub">Mykonos · 4–6 hours · from € 2,400</p>
+ body:`${pic('chef',210,20)}<p class="s13 b500 pri">Dining · Private chef</p><h2 class="h2">Private chef at your villa</h2>
+ <p class="meta">${ic('pin',16)}Mykonos · 4–6 hours · from € 2,400</p>
  ${shead("What's included")}<div class="checks">${['Menu designed with you','Sommelier pairing','Full setup and clean-up'].map(t=>`<div class="hrow" style="gap:10px">${ic('check',18)}<span>${t}</span></div>`).join('')}</div>
- ${shead('Your booking')}<div class="two">${field('sv-date','Date','Select date')}${field('sv-guests','Guests','2 guests')}</div>`,
+ ${shead('Your booking')}<div class="two">${field('sv-date','Date')}${field('sv-guests','Guests')}</div>`,
  footer:btn('Request booking','primary','data-act="submit" data-arg="Private chef, Mykonos" data-go="sent"')}),
 
 event:()=>({top:topBar('Exclusive'),gap:12,
- body:`${ph(200,16)}<div class="hrow" style="gap:8px">${spill('Members only',true)}${S.rsvp?spill("You're going",true)+spill('11 spots left'):spill('12 spots left')}</div>
- <h2 class="h2">Private viewing at the Monaco Yacht Show</h2><p class="s14 sub">Sep 24 · Monaco · Gold & Black tiers</p>
+ body:`${pic('yacht',210,20)}<div class="hrow" style="gap:8px">${spill('Members only','dark')}${S.rsvp?spill("You're going",'ok')+spill('11 spots left','act'):spill('12 spots left','act')}</div>
+ <h2 class="h2">Private viewing at the Monaco Yacht Show</h2><p class="meta">${ic('clock',16)}Sep 24 · Monaco · Gold & Black tiers</p>
  <p>Board three superyachts with a broker, followed by dinner on deck.</p>
  <div class="rows">${row('Date','Wed, Sep 24')}${row('Location','Port Hercule')}${row('Dress code','Smart casual')}${row('Guests','+1 allowed')}</div>`,
  footer:S.rsvp?`<p class="fine">You're on the list. Your concierge will send details a week before.</p>${btn('Cancel RSVP','secondary','data-act="rsvp"')}`
  :btn('RSVP','primary','data-act="rsvp"')+btn('Ask a question','ghost','data-go="conversation"')}),
 
 ask:()=>({top:topBar('New request'),tight:true,
- body:`<div class="stack"><h2 class="h2">What can we arrange?</h2><p class="s14 sub">Describe anything: a product, a trip, a table. Your concierge takes it from here.</p></div>
- ${field('ask-req','Your request','e.g. A table for 4 at Noma this Friday…','text',true)}
+ body:`<div class="stack"><h2 class="h2">What can we arrange?</h2><p class="s16 sub">A product, a trip, a table. Your concierge takes it from here.</p></div>
+ ${field('ask-req','Your request','','text',true)}
  <p class="label">Category (optional)</p><div class="pills">${['Product','Travel','Dining','Event','Other'].map(c=>pill(c,S.askCat===c,`data-act="askCat" data-arg="${c}"`)).join('')}</div>
- <p class="label">Photos or links</p><div class="attach"><button class="addph" aria-label="Add photo" ${NOT('Photo upload')}>${ic('camera',22)}</button>${ph(64,10,'width:64px')}</div>
- <div class="two">${field('ask-budget','Budget','€ 5k – 10k')}${field('ask-date','Needed by','Select date')}</div>
- ${field('ask-loc','Location','City or address')}
- <p class="label">Urgency</p><div class="pills">${['Flexible','This week','Urgent'].map(u=>pill(u,S.urg===u,`data-act="urg" data-arg="${u}"`)).join('')}</div>`,
+ <p class="label">Photos or links</p><div class="attach"><button class="addph" aria-label="Add photo" ${NOT('Photo upload')}>${ic('camera',22)}</button>${pic('chef',64,12,'width:64px')}</div>
+ <div class="two">${field('ask-budget','Budget')}${field('ask-date','Needed by')}</div>
+ ${field('ask-loc','Location')}
+ <p class="label">Urgency</p>${seg(['Flexible','This week','Urgent'],S.urg,'urg')}`,
  footer:btn('Review request','primary','data-go="review"')}),
 
 review:()=>{const v=(k,d)=>esc(S.f[k]||d);return{top:topBar('Review'),gap:16,
  body:`<h2 class="h2">Check your request</h2>
- <div class="box" style="gap:14px">${[['Request',v('ask-req','A table for 4 at Noma, Friday 14 Nov, around 8pm. Window seat if possible.')],['Category',esc(S.askCat||'Dining')],['Budget',v('ask-budget','€ 1,000 – 2,000')],['Needed by',v('ask-date','Fri, 14 Nov')],['Location',v('ask-loc','Copenhagen')],['Urgency',S.urg],['Reply via','Chat']].map(([k,x])=>`<div class="stack g2"><p class="s12 sub">${k}</p><p>${x}</p></div>`).join('')}</div>
- <div class="attach">${ph(64,10,'width:64px')}${ph(64,10,'width:64px')}</div>
+ <div class="box" style="gap:14px">${[['Request',v('ask-req','A table for 4 at Noma, Friday 14 Nov, around 8pm. Window seat if possible.')],['Category',esc(S.askCat||'Dining')],['Budget',v('ask-budget','€ 1,000 – 2,000')],['Needed by',v('ask-date','Fri, 14 Nov')],['Location',v('ask-loc','Copenhagen')],['Urgency',S.urg],['Reply via','Chat']].map(([k,x])=>`<div class="stack g2"><p class="s13 sub">${k}</p><p>${x}</p></div>`).join('')}</div>
+ <div class="attach">${pic('chef',64,12,'width:64px')}</div>
  <p class="s13 sub">A concierge usually replies within 15 minutes.</p>`,
  footer:btn('Submit request','primary',`data-act="submit" data-arg="${esc((S.f['ask-req']||'Table at Noma for 4').slice(0,38))}" data-go="sent"`)+btn('Edit','ghost','data-back')}},
 
 sent:()=>({center:true,
- body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Request sent</h2><p class="s15 sub">Ref #PR-${2040+S.newReqs.length} · Elena, your concierge, will reply in chat shortly.</p>${spill('Submitted')}`,
+ body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Request sent</h2><p class="s16 sub">Ref #PR-${2040+S.newReqs.length} · Elena, your concierge, will reply in chat shortly.</p>${spill('Submitted','act')}`,
  footer:btn('Open chat','primary','data-go="conversation"')+btn('View in Requests','secondary','data-tab="requests"')}),
 
-requests:()=>{const t=S.reqTab;let body=`<div class="pills">${['Active','Completed','Drafts'].map(x=>pill(x,t===x,`data-act="reqTab" data-arg="${x}"`)).join('')}</div>`;
- const rc=(title,meta,price,st,act,a)=>`<div class="box line" ${TAP} ${a} style="gap:6px;cursor:pointer"><div class="hrow"><p class="grow s15 b600">${esc(title)}</p>${spill(st,act)}</div><p class="s13 sub">${meta}</p><p class="s15 b500 num">${price}</p></div>`;
- if(t==='Active'){body+=S.newReqs.map(r=>rc(r,'Just now','Awaiting quote','Submitted',false,`data-toast="It opens the same detail screen once a quote arrives."`)).join('')
-  +rc('Patek Nautilus 5711/1A','Product · Updated 2h ago',S.paid?(S.pay==='deposit'?'€ 42,600 deposit paid':'€ 142,000 paid'):'€ 142,000',S.paid?'Paid':'Quote sent',!S.paid,'data-go="request"')
-  +rc('Table at Noma for 4','Dining · Updated 10m ago','Budget € 1,000 – 2,000','In review',false,'data-toast="Only the Patek request is wired in the lo-fi."')
-  +rc('Gstaad chalet, Christmas','Travel · Updated yesterday','€ 65,000','Needs info',true,'data-go="conversation"')
-  +rc('Chauffeur, FRA airport','Service · Today 18:30','€ 280','In progress',false,'data-toast="Only the Patek request is wired in the lo-fi."');}
- else if(t==='Completed'){body+=rc('Dinner at Le Cinq','Dining · Oct 30','€ 1,240','Completed',false,'data-toast="Receipts and rebooking live here. Not in the lo-fi yet."')+rc('Hermès Kelly 25','Product · Sep 12','€ 24,500','Delivered',false,'data-toast="Receipts and rebooking live here. Not in the lo-fi yet."');}
- else body+=`<div class="empty"><p class="s17 b600">No drafts</p><p class="s14 sub">Requests you start but don't send are saved here.</p><div style="width:200px;margin-top:8px">${btn('New request','secondary','data-go="ask"')}</div></div>`;
- return{top:topBar('Requests',true),tab:'requests',tight:true,body}},
+requests:()=>{const t=S.reqTab;let body=seg(['Active','Completed','Drafts'],t,'reqTab');
+ const rc=(title,meta,price,st,tone,k,a)=>`<div class="box rq" ${TAP} ${a}>${pic(k,64,10,'width:64px')}<div class="grow stack" style="gap:4px"><p class="s16 b500">${esc(title)}</p><p class="s13 sub">${meta}</p><p class="s13 b500 pri num">${price}</p></div>${spill(st,tone)}</div>`;
+ if(t==='Active'){body+=S.newReqs.map(r=>rc(r,'Just now','Awaiting quote','Submitted','',/chef/i.test(r)?'chef':'villa',`data-toast="It opens the same detail screen once a quote arrives."`)).join('')
+  +rc('Patek Nautilus 5711/1A','Product · 2h ago',S.paid?(S.pay==='deposit'?'€ 42,600 deposit paid':'€ 142,000 paid'):'€ 142,000',S.paid?'Paid':'Quote sent',S.paid?'ok':'act','watch-steel','data-go="request"')
+  +rc('Table at Noma for 4','Dining · 10m ago','Budget € 1–2k','In review','','chef',ONLY)
+  +rc('Gstaad chalet, Christmas','Travel · Yesterday','€ 65,000','Needs info','dark','chalet','data-go="conversation"')
+  +rc('Chauffeur, FRA airport','Service · Today 18:30','€ 280','In progress','ok','car',ONLY);}
+ else if(t==='Completed'){const d='data-toast="Receipts and rebooking live here. Not in this prototype yet."';body+=rc('Dinner on a Mykonos terrace','Dining · Oct 30','€ 1,240','Completed','ok','chef',d)+rc('Hermès Kelly 25','Product · Sep 12','€ 24,500','Delivered','ok','handbag',d);}
+ else body+=`<div class="empty"><p class="s20 b500">No drafts</p><p class="s13 sub">Requests you start but don't send are saved here.</p><div style="width:200px;margin-top:8px">${btn('New request','secondary','data-go="ask"')}</div></div>`;
+ return{top:topBar('Requests',true),tab:'requests',gap:12,body}},
 
 request:()=>{const cur=S.paid?4:2;const steps=[['Submitted','Nov 8'],['In review','Nov 8'],['Quote sent','Nov 9'],['Accepted',S.paid?'Today':''],['Paid',S.paid?'Today':''],['In progress',''],['Delivered','']];
  return{top:topBar('Request'),gap:16,
- body:`<div class="hrow" style="align-items:flex-start"><div class="grow stack" style="gap:4px"><p class="s20 b700">Patek Nautilus 5711/1A</p><p class="s13 sub">#PR-2038 · Product</p></div>${spill(S.paid?'Paid':'Quote sent',!S.paid)}</div>
- ${S.paid?`<div class="box"><p class="s13 sub">${S.pay==='deposit'?'Deposit paid':'Paid in full'} · Card •• 4417</p><p class="s28 b700 num">${S.pay==='deposit'?'€ 42,600':'€ 142,000'}</p><p class="s14">${S.pay==='deposit'?'€ 99,400 is due on delivery. ':''}Elena is arranging insured delivery to Frankfurt, Nov 18 – 20.</p>${btn('Download receipt','secondary',NOT('The receipt viewer'))}</div>`
- :`<div class="box"><p class="s13 sub">Quote from Elena</p><p class="s28 b700 num">€ 142,000</p><p class="s14">Unworn 2021, full set. Includes insured delivery to Frankfurt. Valid until 14 Nov.</p><div class="hrow" style="gap:10px">${btn('Accept','primary','data-go="checkout"')}${btn('Discuss','secondary','data-go="conversation"')}</div></div>`}
+ body:`<div class="hrow">${pic('watch-steel',56,10,'width:56px')}<div class="grow stack g2"><p class="s16 b500">Patek Nautilus 5711/1A</p><p class="s13 sub">#PR-2038 · Product</p></div>${spill(S.paid?'Paid':'Quote sent',S.paid?'ok':'act')}</div>
+ ${S.paid?`<div class="box"><p class="s13 sub">${S.pay==='deposit'?'Deposit paid':'Paid in full'} · Visa •• 4417</p><p class="s31 b500 num">${S.pay==='deposit'?'€ 42,600':'€ 142,000'}</p><p class="s13">${S.pay==='deposit'?'€ 99,400 is due on delivery. ':''}Elena is arranging insured delivery to Frankfurt, Nov 18 – 20.</p>${btn('Download receipt','secondary',NOT('The receipt viewer'))}</div>`
+ :`<div class="box"><div class="hrow" style="gap:8px">${pic('concierge',28,14,'width:28px')}<p class="s13 sub">Quote from Elena</p></div><p class="s31 b500 num">€ 142,000</p><p class="s13">Unworn 2021, full set. Insured delivery to Frankfurt included. Valid until 14 Nov.</p><div class="hrow" style="gap:10px">${btn('Accept','primary','data-go="checkout"')}${btn('Discuss','secondary','data-go="conversation"')}</div></div>`}
  ${shead('Status')}<div class="tl">${steps.map(([l,d],i)=>{const c=i<cur?'done':i===cur?'now':'todo';return`<div class="${c}"><i class="d ${c}"></i><span class="x">${l}</span><span class="s13 sub">${d}</span></div>`}).join('')}</div>
  <div class="rows">${row('Documents','2 files',NOT('The document viewer'))}${row('Chat with Elena','','data-go="conversation"')}</div>`}},
 
 checkout:()=>{const dep=S.pay==='deposit';const due=dep?42600:142000;return{top:topBar('Checkout'),tight:true,
- body:`<div class="hrow">${ph(64,10,'width:64px')}<div class="grow stack g2"><p class="s15 b600">Patek Nautilus 5711/1A</p><p class="s14 sub num">€ 142,000</p></div></div>
+ body:`<div class="box hrow" style="padding:12px">${pic('watch-steel',64,10,'width:64px')}<div class="grow stack g2"><p class="s16 b500">Patek Nautilus 5711/1A</p><p class="s13 sub num">€ 142,000</p></div></div>
  ${shead('Delivery')}<div class="rows">${row('Address','Home · Frankfurt',NOT('Address selection'))}${row('Date','Nov 18 – 20',NOT('The date picker'))}</div>
- ${shead('Payment')}<div class="pills">${pill('Pay in full',!dep,'data-act="pay" data-arg="full"')}${pill('Deposit 30%',dep,'data-act="pay" data-arg="deposit"')}</div>
- <div class="rows">${row('Method','Card •• 4417',NOT('Payment method selection'))}</div>
- <div class="box">${kv('Subtotal','€ 142,000')}${kv('Insured delivery','Included')}${dep?kv('Due on delivery','€ 99,400')+kv('Due today','€ 42,600',true):kv('Total','€ 142,000',true)}</div>
- <p class="s12 sub">By paying you accept the purchase terms. Deposits are refundable for 48 hours.</p>`,
+ ${shead('Payment')}${seg([['Pay in full','full'],['Deposit 30%','deposit']],S.pay,'pay')}
+ <div class="rows">${row('Method','Visa •• 4417',NOT('Payment method selection'))}</div>
+ <div class="box soft">${kv('Subtotal','€ 142,000')}${kv('Insured delivery','Included')}${dep?kv('Due on delivery','€ 99,400')+kv('Due today','€ 42,600',true):kv('Total','€ 142,000',true)}</div>
+ <p class="s10 sub">By paying you accept the purchase terms. Deposits are refundable for 48 hours.</p>`,
  footer:btn('Pay '+eur(due),'primary','data-act="paynow" data-go="paid"')}},
 
 paid:()=>({center:true,
- body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Payment confirmed</h2><p class="s15 sub">Elena is arranging delivery. You'll get updates in Requests and Chat.</p>
+ body:`<div class="badge ok">${ic('check',36)}</div><h2 class="h2">Payment confirmed</h2><p class="s16 sub">Elena is arranging delivery. You'll get updates in Requests and Chat.</p>
  <div class="box" style="width:100%;gap:10px;text-align:left;box-sizing:border-box">${kv('Reference','#PR-2038')}${kv('Amount',S.pay==='deposit'?'€ 42,600':'€ 142,000')}${kv('Delivery','Nov 18 – 20')}</div>`,
  footer:btn('Track request','primary','data-act="trackStack" data-go="request"')+btn('Download receipt','ghost',NOT('The receipt viewer'))}),
 
-inbox:()=>{const th=(t,m,time,un,round,a)=>`<div class="thread" ${TAP} ${a}><span class="ph ${round?'round':''}">${ic('image',20)}</span><div class="m"><div class="hrow between"><p class="s15 b600">${t}</p><span class="s12 sub">${time}</span></div><p>${m}</p></div>${un?'<i class="unread"></i>':''}</div>`;
- return{top:topBar('Chat',true),tab:'inbox',gap:12,
+inbox:()=>{const th=(t,m,time,un,k,round,a)=>`<div class="thread" ${TAP} ${a}><div class="pic ${round?'round':''}" aria-hidden="true" style="background-image:url('img/${k}.jpg')"></div><div class="m"><div class="hrow between"><p class="s16 b500">${t}</p><span class="s10 sub">${time}</span></div><p>${m}</p></div>${un?'<i class="unread"></i>':''}</div>`;
+ const other='data-toast="Each request has its own thread. Only Patek is wired."';
+ return{top:topBar('Chat',true),tab:'inbox',gap:10,
  body:`<label class="search" for="chat-q">${ic('search',20)}<input id="chat-q" placeholder="Search messages" value="${esc(S.f['chat-q'])}" autocomplete="off"></label>
- <p class="s13 b500 sub">Your concierge</p><div>${th('Elena · Concierge',S.msgs.length?esc(S.msgs[S.msgs.length-1].t):"Of course. I'll confirm the table by 6pm.",'12:04',!S.read,true,'data-go="conversation"')}</div>
- <p class="s13 b500 sub">Requests</p><div>${th('Patek Nautilus 5711/1A','Quote updated with insured delivery.','11:40',!S.read,false,'data-go="conversation"')}${th('Gstaad chalet, Christmas','Could you share dates and guests?','Yesterday',false,false,'data-toast="Each request has its own thread. Only Patek is wired."')}${th('Table at Noma for 4','Request received.','Mon',false,false,'data-toast="Each request has its own thread. Only Patek is wired."')}</div>`}},
+ <p class="s13 b500 sub">Your concierge</p><div>${th('Elena · Concierge',S.msgs.length?esc(S.msgs[S.msgs.length-1].t):"Of course. I'll confirm the table by 6pm.",'12:04',!S.read,'concierge',true,'data-go="conversation"')}</div>
+ <p class="s13 b500 sub">Requests</p><div>${th('Patek Nautilus 5711/1A','Quote updated with insured delivery.','11:40',!S.read,'watch-steel',false,'data-go="conversation"')}${th('Gstaad chalet, Christmas','Could you share dates and guests?','Yesterday',false,'chalet',false,other)}${th('Table at Noma for 4','Request received.','Mon',false,'chef',false,other)}</div>`}},
 
-conversation:()=>({top:topBar('Elena'),gap:12,
- body:`<div style="text-align:center">${spill('Re: Patek Nautilus 5711/1A')}</div><p class="s12 mute" style="text-align:center">Today 11:32</p>
+conversation:()=>({top:topBar('Elena · Concierge'),gap:12,
+ body:`<div style="text-align:center">${spill('Re: Patek Nautilus 5711/1A')}</div><p class="s10 sub" style="text-align:center">Today 11:32</p>
  <div class="bub">Good news, I found one. Unworn, 2021, full set.</div>
  <div class="bub me">Great. Can you include delivery to Frankfurt?</div>
- <div class="qcard"><p class="s12 sub">Quote</p><p class="s20 b700 num">€ 142,000</p><p class="s13 sub">Insured delivery included</p>${btn('View quote','secondary','data-go="request"')}</div>
+ <div class="qcard">${pic('watch-steel',110,10)}<p class="s10 sub">Quote</p><p class="s20 b500 num">€ 142,000</p><p class="s13 sub">Insured delivery included</p>${btn('View quote','secondary','data-go="request"')}</div>
  <div class="bub">Done. Quote updated, valid until 14 Nov.</div>
  ${S.msgs.map(m=>`<div class="bub ${m.me?'me':''}">${esc(m.t)}</div>`).join('')}`,
  footer:`<div class="composer"><button aria-label="Attach" ${NOT('Attachments')}>${ic('paperclip')}</button><input id="msg" placeholder="Message" autocomplete="off" aria-label="Message"><button class="sendb" data-act="send" aria-label="Send">${ic('send',20)}</button></div>`}),
 
 profile:()=>({top:topBar('Profile',true),tab:'profile',gap:16,
- body:`<div class="member"><p class="k">PERCIMON</p><div style="height:40px"></div><p class="s22 b600">Gold member</p><p class="s13" style="color:#BFBFBF">Member since 2026 · No. 00412</p></div>
- <div class="rows">${row('Wishlist',String(4+(S.saved?1:0)),'data-go="wishlist"')}${row('Preferences','','data-go="preferences"')}${row('Addresses','2',NOT('Addresses'))}${row('Payment methods','',NOT('Payment methods'))}${row('Notifications','On',NOT('Notification settings'))}${row('Privacy & security','',NOT('Privacy & security'))}${row('Help & contact','','data-go="conversation"')}</div>
+ body:`<div class="hrow"><span class="avatar">NK</span><div class="grow stack g2"><p class="s20 b500">Nadia Karimi</p><p class="s13 sub">nadia@email.com</p></div></div>
+ <div class="member"><p class="k">PERCIMON</p><div style="height:40px"></div><p class="s25 b500">Gold member</p><p class="x">Member since 2026 · No. 00412</p></div>
+ <div class="rows">${row('Wishlist',String(4+(S.saved?1:0)),'data-go="wishlist"')}${row('Preferences','','data-go="preferences"')}${row('Addresses','2',NOT('Addresses'))}${row('Payment methods','Visa •• 4417',NOT('Payment methods'))}${row('Notifications','On',NOT('Notification settings'))}${row('Help & contact','','data-go="conversation"')}</div>
  ${btn('Sign out','ghost','data-act="signout" data-tab="welcome"')}`}),
 
-wishlist:()=>{let items=[['Birkin 30','Hermès','Price on request','product'],['Chalet Les Arolles','Gstaad · 6 guests','€ 9,000 / night','service'],['Royal Oak 15500','Audemars Piguet','€ 48,000','product'],['Private chef','Mykonos','From € 2,400','service']];
- if(S.saved)items.unshift(['Nautilus 5711/1A','Patek Philippe','Price on request','product']);
- if(S.wl==='Products')items=items.filter(i=>i[3]==='product');if(S.wl==='Services')items=items.filter(i=>i[3]==='service');
+wishlist:()=>{let items=[['Kelly 25','Hermès','Price on request','handbag','product'],['Chalet Les Arolles','Gstaad · 6 guests','€ 9,000 / night','chalet','service'],['Royal Oak 15500','Audemars Piguet','€ 48,000','watch-gold','product'],['Private chef','Mykonos','From € 2,400','chef','service']];
+ if(S.saved)items.unshift(['Nautilus 5711/1A','Patek Philippe','Price on request','watch-steel','product']);
+ if(S.wl==='Products')items=items.filter(i=>i[4]==='product');if(S.wl==='Services')items=items.filter(i=>i[4]==='service');
  return{top:topBar('Wishlist'),tight:true,
- body:`<div class="pills">${['All','Products','Services'].map(x=>pill(x,S.wl===x,`data-act="wl" data-arg="${x}"`)).join('')}</div>
- <div class="grid">${items.map(i=>card(i[0],i[1],i[2],`data-go="${i[3]}"`)).join('')}</div>`}},
+ body:`${seg(['All','Products','Services'],S.wl,'wl')}
+ <div class="grid">${items.map(i=>card(i[0],i[1],i[2],i[3],`data-go="${i[4]}"`)).join('')}</div>`}},
 
 preferences:()=>({top:topBar('Preferences'),tight:true,
  body:`${shead('Sizes')}<div class="rows">${row('Clothing','M / 48',NOT('The size picker'))}${row('Shoes','EU 42',NOT('The size picker'))}${row('Ring','54',NOT('The size picker'))}</div>
@@ -513,7 +557,8 @@ function render(id,keepScroll){
  const same=id===cur;const prev=phone.querySelector('.content');const sc=prev?prev.scrollTop:0;
  if(id==='conversation')S.read=true;
  cur=id;const s=R[id]();
- phone.innerHTML=`<div class="sb"><span>9:41</span><i></i></div>${s.top||''}<div class="content ${s.center?'center':''} ${s.tight?'tight':''}" ${s.gap?`style="gap:${s.gap}px"`:''}>${s.body}</div>${s.footer?`<div class="footer">${s.footer}</div>`:''}${s.tab?tabs(s.tab):''}<div class="toast" id="toast" role="status" aria-live="polite"></div>`;
+ phone.classList.toggle('on-image',!!s.bg);
+ phone.innerHTML=`${s.bg?`<div class="bgimg" style="background-image:url('img/${s.bg}.jpg')"></div>`:''}<div class="sb"><span>9:41</span><i></i></div>${s.top||''}<div class="content ${s.center?'center':''} ${s.bottom?'bottom':''} ${s.tight?'tight':''}" ${s.gap?`style="gap:${s.gap}px"`:''}>${s.body}</div>${s.footer?`<div class="footer">${s.footer}</div>`:''}${s.tab?tabs(s.tab):''}<div class="toast" id="toast" role="status" aria-live="polite"></div>`;
  const c=phone.querySelector('.content');
  if(id==='conversation')c.scrollTop=c.scrollHeight;else if(same||keepScroll)c.scrollTop=sc;
  const m=META[id];
@@ -579,7 +624,7 @@ const STATES={
 const nStates=Object.values(STATES).reduce((a,v)=>a+v.length,0);
 
 /* ---------- navigator ---------- */
-document.getElementById('navMeta').textContent=`Lo-fi prototype · v0.3 · ${ORDER.length} screens · ${nStates} states`;
+document.getElementById('navMeta').textContent=`Hi-fi prototype · v1.0 · ${ORDER.length} screens · ${nStates} states`;
 document.getElementById('list').innerHTML=FLOWS.map(([s,items])=>`<div class="flow"><h4>${s}</h4>${items.map(([id,code,name])=>`<button class="scr" data-id="${id}"><span class="code">${code}</span>${name}</button>${STATES[id]?`<div class="states">${STATES[id].map(([l],i)=>`<button class="st" data-id="${id}" data-i="${i}">${l}</button>`).join('')}</div>`:''}`).join('')}</div>`).join('');
 document.getElementById('list').addEventListener('click',e=>{
  const st=e.target.closest('.st'),b=e.target.closest('.scr');
