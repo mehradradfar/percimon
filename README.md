@@ -4,7 +4,7 @@ Clickable prototype for Percimon, a luxury concierge app: browse curated product
 
 ## Files
 
-- `index.html` is the hi-fi prototype: 24 screens built from the Percimon design system (brand colors, Inter Regular/Medium, buttons, inputs, chips, segmented controls), with photography in `img/`.
+- `index.html` is the hi-fi prototype: an animated splash (`anim/percimon-onboarding.json`, played with lottie-web) followed by 24 screens built from the Percimon design system (brand colors, Inter Regular/Medium, buttons, inputs, chips, segmented controls), with photography in `img/`.
 - `lofi.html` is the earlier grayscale lo-fi version of the same flows.
 
 Both are static files with no build step. Open `index.html` in a browser, or serve the folder.
