@@ -167,6 +167,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .ghead.lg{font-size:20px;font-weight:700;color:var(--label);text-transform:none;letter-spacing:-.01em;padding:0 4px 8px}
 .gfoot{font-size:13px;line-height:18px;color:var(--label2);padding:7px 16px 0}
 .gcard{background:var(--cell);border-radius:22px;overflow:hidden}
+.screen:not(.grouped) .gcard{background:var(--grouped)}
+.phone.dark .screen:not(.grouped) .gcard{background:var(--cell)}
 .sheet .gcard{background:var(--sheet-cell)}
 .row{display:flex;align-items:center;gap:12px;min-height:52px;width:100%;padding:10px 16px;position:relative;text-align:left;font-size:17px;background:transparent;transition:background .15s}
 .row+.row::before,.rcell+.rcell::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
@@ -673,6 +675,7 @@ function rstat(id){
  if(id==='mykonos')return {st:3,label:'Completed',sub:'30 Oct · € 1,240',tone:'sec'};
  if(id==='kelly')return {st:3,label:'Delivered',sub:'12 Sep · € 24,500',tone:'sec'};
  return {st:0,label:'Sent',sub:'Elena is on it',tone:'sec'}}
+const activeReqs=()=>({att:[...(S.paid?[]:['patek']),'gstaad'],prog:[...S.sent.map(r=>r.id),'noma','chauffeur',...(S.paid?['patek']:[])]});
 const reqData=id=>REQS[id]||S.sent.find(r=>r.id===id)||REQS.patek;
 const rcell=id=>{const r=reqData(id),s=rstat(id);return `<button class="rcell" data-act="setReq" data-arg="${id}" data-go="request"><span class="th" style="${bgi(r.img)}"></span><span class="tx"><span class="t">${esc(r.title)}</span><span class="s tone-${s.tone}"><i class="dot"></i>${s.label}</span><span class="m">${s.sub}</span></span><span class="chev">${ic('chevR',16,'bold')}</span></button>`};
 function track(st,tone,from){const w=st/3*100,f=from===undefined?w:from/3*100;return `<div class="track tone-${tone}"><div class="bar"><span class="fill" data-to="${w}" style="width:${f}%"></span><span class="pts">${STEPS.map((_,i)=>`<i class="${i<=st?'on':''}"></i>`).join('')}</span></div><div class="lbl">${STEPS.map((l,i)=>`<span class="${i===st?'on':''}">${l}</span>`).join('')}</div></div>`}
@@ -704,8 +707,11 @@ setup:()=>({title:'',right:`<button class="nbtn" data-act="finishSetup">Skip</bu
  <p class="flabel">What are you into?</p></div><div class="chips wrap">${INTERESTS.map(t=>chip(t,S.interests.has(t),`data-act="interest" data-arg="${t}"`)).join('')}</div>`,
  bottom:btn('Continue','filled','data-act="finishSetup"')}),
 
-home:()=>({large:true,title:'Discover',eyebrow:dateLine(),tab:'home',ltRight:`<button class="avbtn" data-tab="profile" aria-label="Profile">${initials()}</button>`,
+home:()=>{const a=activeReqs(),list=[...a.att,...a.prog],need=a.att.length;
+ return {large:true,title:'Discover',eyebrow:dateLine(),tab:'home',
  body:`<button class="searchbar" data-go="search">${ic('search',18)}<span>Watches, stays, chefs</span></button>
+ <div class="shead"><h3>Your requests</h3><button data-tab="requests">See All</button></div>
+ ${group(list.slice(0,3).map(rcell),{foot:need?`${need} need${need>1?'':'s'} your reply · ${list.length} active in total`:`${list.length} active`})}
  <div class="today" ${TAP} data-item="chalet" data-go="service" style="${bgi('chalet')}"><div class="tp"><p>Curated collection</p><h2>Winter in Gstaad</h2></div><p class="bt">Chalets, private ski guides and après dining, arranged end to end.</p></div>
  <button class="askcard" data-sheet="ask"><span class="av" style="${bgi('concierge')}"></span><span class="tx"><span class="hl" style="display:block">Can't find it? Ask Elena</span><span class="fn sec">Usually replies in 15 minutes</span></span><span class="chev">${ic('chevR',18,'bold')}</span></button>
  <div class="shead"><h3>Browse</h3></div>
@@ -713,7 +719,7 @@ home:()=>({large:true,title:'Discover',eyebrow:dateLine(),tab:'home',ltRight:`<b
  <div class="shead"><h3>Exclusive drops</h3><button data-go="watches">See All</button></div>
  <div class="shelf">${['royaloak','kelly','daytona','nautilus'].map(id=>pcard(id)).join('')}</div>
  <div class="shead"><h3>Experiences</h3></div>
- <div class="shelf">${['yacht','chef','car'].map(id=>pcard(id,true)).join('')}</div>`}),
+ <div class="shelf">${['yacht','chef','car'].map(id=>pcard(id,true)).join('')}</div>`}},
 
 search:()=>({nav:false,tab:'home',body:`<div class="searchrow"><label class="searchbar" for="q">${ic('search',18)}<input id="q" placeholder="Watches, stays, chefs" value="${esc(S.q)}" autocomplete="off"></label><button class="link" data-back>Cancel</button></div><div id="results">${results()}</div>`,mount:el=>{const q=el.querySelector('#q');if(q&&!S.q)setTimeout(()=>q.focus({preventScroll:true}),420)}}),
 
@@ -745,7 +751,7 @@ event:()=>{const it=ITEMS.yacht;return {hero:true,light:true,title:it.name,right
  :`<div class="bb-price"><p class="fn sec">Included with</p><p class="hl">Gold membership</p></div><button class="btn filled bb-btn" data-act="rsvp">RSVP</button>`}},
 
 requests:()=>{let body=`<div class="segwrap">${seg(['Active','Completed'],S.reqSeg,'reqSeg')}</div>`;
- if(S.reqSeg==='Active'){const att=[...(S.paid?[]:['patek']),'gstaad'],prog=[...S.sent.map(r=>r.id),'noma','chauffeur',...(S.paid?['patek']:[])];
+ if(S.reqSeg==='Active'){const {att,prog}=activeReqs();
   body+=group(att.map(rcell),{head:'Needs your attention'})+group(prog.map(rcell),{head:'In progress'});}
  else body+=group(['mykonos','kelly'].map(rcell),{foot:'Receipts stay here for seven years.'});
  return {large:true,title:'Requests',tab:'requests',grouped:true,right:`<button class="gbtn" data-sheet="ask" aria-label="New request">${ic('plus',22,'bold')}</button>`,body}},
@@ -835,7 +841,8 @@ function results(){const q=S.q.trim().toLowerCase();
 
 /* ---------- engine ---------- */
 const phone=$('#phone'),stackEl=$('#stack'),tabbar=$('#tabbar'),sbar=$('#sbar'),homebar=$('#homebar'),sheetLayer=$('#sheetLayer'),sheetEl=$('#sheet'),menuLayer=$('#menuLayer');
-let cur=null,hist=[],sheetId=null;
+let cur=null,hist=[],sheetId=null,rootTab=null;
+const TAB_IDS=['home','requests','inbox','profile'];
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const curEl=()=>stackEl.querySelector('.screen.cur');
 
@@ -855,7 +862,7 @@ function buildScreen(id,hasBack){
 function chrome(){const el=curEl(),d=(el&&el._d)||{};
  const light=!sheetId&&(d.lightAlways||(d.light&&el&&!el.classList.contains('scrolled')));
  sbar.classList.toggle('light',!!light);homebar.classList.toggle('light',!!d.lightAlways&&!sheetId);
- tabbar.classList.toggle('hide',!d.tab);if(d.tab)renderTabbar(d.tab)}
+ tabbar.classList.toggle('hide',!d.tab);if(d.tab)renderTabbar(hist.length&&rootTab?rootTab:d.tab)}
 const TABS=[['home','Discover','compass'],['requests','Requests','checklist'],['inbox','Messages','bubble'],['profile','Profile','person']];
 function renderTabbar(a){const badge=id=>{const n=id==='requests'?S.reqBadge:id==='inbox'?S.unread.size:0;return n?`<span class="badge">${n}</span>`:''};
  tabbar.innerHTML=`<div class="tb-main">${TABS.map(([id,l,i])=>`<button class="tb-item ${a===id?'on':''}" data-tab="${id}" aria-current="${a===id?'page':'false'}">${ic(i,25,a===id?'bold':'')}<span>${l}</span>${badge(id)}</button>`).join('')}</div><button class="tb-ask" data-sheet="ask" aria-label="New request">${ic('plus',28,'bold')}</button>`}
@@ -866,13 +873,14 @@ function show(id,mode='none'){
  if(mode==='none'||!old||REDUCED){stackEl.innerHTML='';stackEl.appendChild(el);el.classList.add('cur')}
  else if(mode==='push'){el.classList.add('enter-r');stackEl.appendChild(el);el.offsetWidth;old.classList.remove('cur');el.classList.add('cur');requestAnimationFrame(()=>{el.classList.remove('enter-r');old.classList.add('exit-l')});setTimeout(()=>old.remove(),500)}
  else{el.classList.add('exit-l');stackEl.insertBefore(el,old);el.offsetWidth;old.classList.remove('cur');el.classList.add('cur');requestAnimationFrame(()=>{el.classList.remove('exit-l');old.classList.add('enter-r')});setTimeout(()=>old.remove(),500)}
+ if(!hist.length)rootTab=el._d.tab||null;
  if(el._d.mount)el._d.mount(el,false);
  chrome();updateSide();setHash()}
 function go(id){if(SHEET_BASE[id])return openSheet(id);hist.push(cur);show(id,'push')}
 function back(){if(!hist.length)return;show(hist.pop(),'pop')}
 function tab(id){if(id==='requests')S.reqBadge=0;hist=[];closeSheet(true);show(id,'none')}
 function chain(id){const out=[];let p=PARENT[id];while(p){out.unshift(p);p=PARENT[p]}return out}
-function jump(id){closeSheet(true);if(SHEET_BASE[id]){const b=SHEET_BASE[id];hist=chain(b);show(b,'none');setTimeout(()=>openSheet(id),80);return}hist=chain(id);show(id,'none')}
+function jump(id){closeSheet(true);if(SHEET_BASE[id]){const b=SHEET_BASE[id];hist=chain(b);rootTab=hist.length&&TAB_IDS.includes(hist[0])?hist[0]:null;show(b,'none');setTimeout(()=>openSheet(id),80);return}hist=chain(id);rootTab=hist.length&&TAB_IDS.includes(hist[0])?hist[0]:null;show(id,'none')}
 function refresh(){const old=curEl();if(!old)return;const ae=document.activeElement,fid=ae&&phone.contains(ae)&&ae.id,sel=fid&&'selectionStart' in ae?[ae.selectionStart,ae.selectionEnd]:null;
  const sc=old.querySelector('.scroll'),top=sc?sc.scrollTop:0,el=buildScreen(cur,hist.length>0);el.classList.add('cur');stackEl.replaceChild(el,old);
  const s2=el.querySelector('.scroll');if(s2){s2.scrollTop=top;s2.dispatchEvent(new Event('scroll'))}
@@ -1076,6 +1084,7 @@ addEventListener('resize',fit);fit();
 const start=location.hash.slice(1);
 if(start&&(R[start]||SH[start]))jump(start);else show('splash','none');
 </script>
+
 
 </body>
 </html>
