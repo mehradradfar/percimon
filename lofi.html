@@ -6,7 +6,7 @@
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-<title>Percimon Lo-Fi Prototype</title>
+<title>Persimon Lo-Fi Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -224,7 +224,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 <div class="app">
   <aside class="nav" id="nav" aria-label="Screens">
     <div class="nav-head">
-      <div class="brand"><span class="fruit"></span>Percimon</div>
+      <div class="brand"><span class="fruit"></span>Persimon</div>
       <button class="close" id="navClose" aria-label="Close screen list"></button>
       <p id="navMeta">Lo-fi prototype · v0.3 · 23 screens</p>
     </div>
@@ -315,7 +315,7 @@ const eur=n=>'€ '+n.toLocaleString('en-US');
 
 /* ---------- screens ---------- */
 const R={
-welcome:()=>({body:`${ph(280,20)}<p class="k">PERCIMON</p><h2 class="h1">Everything, arranged.</h2><p class="s16 sub">A private concierge for luxury goods, travel and experiences.</p>`,
+welcome:()=>({body:`${ph(280,20)}<p class="k">PERSIMON</p><h2 class="h1">Everything, arranged.</h2><p class="s16 sub">A private concierge for luxury goods, travel and experiences.</p>`,
  footer:btn('Create account','primary','data-act="auth" data-arg="signup" data-go="signup"')+`<div class="divider">or continue with</div><div class="ssorow">${sso('Apple','data-act="auth" data-arg="signup" data-toast="Signed up with Apple." data-go="taste"')}${sso('Google','data-act="auth" data-arg="signup" data-toast="Signed up with Google." data-go="taste"')}</div>`+btn('I already have an account','ghost','data-go="signin"')}),
 
 signup:()=>({top:topBar('Create account'),gap:16,
@@ -331,7 +331,7 @@ signin:()=>{const ph_=S.signinBy==='Phone';return{top:topBar('Sign in'),gap:16,
  <div class="divider">or with a one-time code</div>
  <div class="pills">${pill('Email',!ph_,'data-act="signinBy" data-arg="Email"')}${pill('Phone',ph_,'data-act="signinBy" data-arg="Phone"')}</div>
  ${ph_?field('si-phone','Phone','+49','tel'):field('si-email','Email','name@email.com','email')}`,
- footer:btn('Send code','primary','data-act="auth" data-arg="signin" data-go="verify"')+`<button class="linkline" data-go="signup">New to Percimon? <b>Create an account</b></button>`}},
+ footer:btn('Send code','primary','data-act="auth" data-arg="signin" data-go="verify"')+`<button class="linkline" data-go="signup">New to Persimon? <b>Create an account</b></button>`}},
 
 verify:()=>{const signin=S.auth==='signin';const to=signin&&S.signinBy==='Phone'?'+49 ••• ••• 21':mask(S.f[signin?'si-email':'su-email']);return{top:topBar('Verify'),
  body:`<div class="stack"><h2 class="h2">Enter the code</h2><p class="s15 sub">We sent a 6-digit code to ${esc(to)}</p></div>
@@ -347,10 +347,10 @@ taste:()=>({top:topBar('Your taste'),tight:true,
  footer:btn('Continue','primary','data-go="ready"')+btn('Skip for now','ghost','data-go="ready"')}),
 
 ready:()=>({center:true,
- body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Welcome to Percimon</h2><p class="s15 sub">Your concierge, Elena, is ready whenever you are.</p>${spill('Member',true)}`,
+ body:`<div class="badge">${ic('check',36)}</div><h2 class="h2">Welcome to Persimon</h2><p class="s15 sub">Your concierge, Elena, is ready whenever you are.</p>${spill('Member',true)}`,
  footer:btn('Start exploring','primary','data-tab="home"')+btn('Meet your concierge','secondary','data-go="conversation"')}),
 
-home:()=>({top:topBar('Percimon',true),tab:'home',gap:18,
+home:()=>({top:topBar('Persimon',true),tab:'home',gap:18,
  body:`<div class="hrow between"><div class="stack g2"><p class="s13 sub">Good evening</p><p class="s22 b600">Welcome back</p></div>${spill('Gold member',true)}</div>
  <button class="search" data-go="search">${ic('search',20)}<span>Search watches, villas, chefs…</span>${ic('sliders',20)}</button>
  <div class="tile" ${TAP} data-go="service">${ph(180,16)}<p class="s17 b600">Curated · Winter in Gstaad</p><p class="s13 sub">Chalets, private ski guides and après dining</p></div>
@@ -465,7 +465,7 @@ conversation:()=>({top:topBar('Elena'),gap:12,
  footer:`<div class="composer"><button aria-label="Attach" ${NOT('Attachments')}>${ic('paperclip')}</button><input id="msg" placeholder="Message" autocomplete="off" aria-label="Message"><button class="sendb" data-act="send" aria-label="Send">${ic('send',20)}</button></div>`}),
 
 profile:()=>({top:topBar('Profile',true),tab:'profile',gap:16,
- body:`<div class="member"><p class="k">PERCIMON</p><div style="height:40px"></div><p class="s22 b600">Gold member</p><p class="s13" style="color:#BFBFBF">Member since 2026 · No. 00412</p></div>
+ body:`<div class="member"><p class="k">PERSIMON</p><div style="height:40px"></div><p class="s22 b600">Gold member</p><p class="s13" style="color:#BFBFBF">Member since 2026 · No. 00412</p></div>
  <div class="rows">${row('Wishlist',String(4+(S.saved?1:0)),'data-go="wishlist"')}${row('Preferences','','data-go="preferences"')}${row('Addresses','2',NOT('Addresses'))}${row('Payment methods','',NOT('Payment methods'))}${row('Notifications','On',NOT('Notification settings'))}${row('Privacy & security','',NOT('Privacy & security'))}${row('Help & contact','','data-go="conversation"')}</div>
  ${btn('Sign out','ghost','data-act="signout" data-tab="welcome"')}`}),
 
